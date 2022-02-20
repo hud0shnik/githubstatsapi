@@ -21,6 +21,7 @@ type User struct {
 	Avatar   string `json:"avatar"`
 	Commits  int    `json:"commits"`
 	Color    int    `json:"color"`
+	Stars    int    `json:"stars"`
 }
 
 // Функция получения информации с сайта
@@ -47,13 +48,25 @@ func getCommits(username string, date string) User {
 	}
 
 	// HTML страницы в формате string
-	pageStr := string(body[100000:225000])
+	pageStr := string(body[:])
+
+	left := strings.Index(pageStr, "Stars\n    <span title=") + 23
+	fmt.Println(left)
+	if left > 23 {
+		right := left
+		for ; pageStr[right] != '"'; right++ {
+			// Доводит pageStr[right] до символа '"'
+		}
+
+		// Запись имени
+		result.Stars, _ = strconv.Atoi(pageStr[left:right])
+	}
 
 	// Поиск имени пользователя
-	left := strings.Index(pageStr, "itemprop=\"n") + 16
+	left = strings.Index(pageStr, "itemprop=\"n") + 16
 
 	// Если имя найдено, считывает его и записывает
-	if left != -1 {
+	if left > 16 {
 		right := left
 		for ; pageStr[right] != '<'; right++ {
 			// Доводит pageStr[right] до символа '<'
