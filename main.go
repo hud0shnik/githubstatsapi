@@ -36,10 +36,8 @@ func getCommits(username string, date string) User {
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	// Если поле даты пустое, функция поставит сегодняшнее число
-	if date == "" {
-		date = string(time.Now().Format("2006-01-02"))
-	}
+	// HTML страницы в формате string
+	pageStr := string(body)
 
 	// Результат
 	result := User{
@@ -47,11 +45,19 @@ func getCommits(username string, date string) User {
 		Username: username,
 	}
 
-	// HTML страницы в формате string
-	pageStr := string(body[:])
+	if strings.Contains(pageStr, "<title>Page not found · GitHub</title>") {
+		return result
+	}
+
+	// Если поле даты пустое, функция поставит сегодняшнее число
+	if date == "" {
+		date = string(time.Now().Format("2006-01-02"))
+	}
+
+	pageStr = pageStr[100000:225000]
 
 	left := strings.Index(pageStr, "Stars\n    <span title=") + 23
-	fmt.Println(left)
+
 	if left > 23 {
 		right := left
 		for ; pageStr[right] != '"'; right++ {
