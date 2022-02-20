@@ -36,16 +36,17 @@ func getCommits(username string, date string) User {
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	// HTML страницы в формате string
+	// HTML полученной страницы в формате string
 	pageStr := string(body)
 
-	// Результат
+	// Структура, которую будет возвращать функция
 	result := User{
 		Date:     date,
 		Username: username,
 	}
 
-	if strings.Contains(pageStr, "<title>Page not found · GitHub</title>") {
+	// Проверка на страницу пользователя
+	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") {
 		return result
 	}
 
@@ -54,17 +55,20 @@ func getCommits(username string, date string) User {
 		date = string(time.Now().Format("2006-01-02"))
 	}
 
+	// Обрезка ненужных частей страницы
 	pageStr = pageStr[100000:225000]
 
+	// Поиск информации о звездах
 	left := strings.Index(pageStr, "Stars\n    <span title=") + 23
 
+	// Если звезды есть, считывает их количество и записывает
 	if left > 23 {
 		right := left
 		for ; pageStr[right] != '"'; right++ {
 			// Доводит pageStr[right] до символа '"'
 		}
 
-		// Запись имени
+		// Запись звезд в результат
 		result.Stars, _ = strconv.Atoi(pageStr[left:right])
 	}
 
@@ -108,7 +112,7 @@ func getCommits(username string, date string) User {
 	// Проверка на существование нужной ячейки
 	if i != -1 {
 		for ; pageStr[i] != '<'; i-- {
-			// Доводит i до начала кода ячейки
+			// Доводит i до начала тега ячейки
 		}
 
 		// Получение параметров ячейки
