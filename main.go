@@ -13,23 +13,28 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Структура для храния информации о пользователе
-type User struct {
-	Date     string `json:"date"`
+// Структура для храния полной информации о пользователе
+type UserStats struct {
 	Username string `json:"username"`
 	Name     string `json:"name"`
 	Avatar   string `json:"avatar"`
-	Commits  int    `json:"commits"`
-	Color    int    `json:"color"`
 	Stars    int    `json:"stars"`
 }
 
-// Функция получения информации с сайта
-func getCommits(username string, date string) User {
+// Структура для храния информации о коммитах
+type UserCommits struct {
+	Date     string `json:"date"`
+	Username string `json:"username"`
+	Commits  int    `json:"commits"`
+	Color    int    `json:"color"`
+}
+
+// Функция получения статистики с сайта
+func getStats(username string) UserStats {
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username)
 	if err != nil {
-		return User{}
+		return UserStats{}
 	}
 
 	// Запись респонса
@@ -40,8 +45,7 @@ func getCommits(username string, date string) User {
 	pageStr := string(body)
 
 	// Структура, которую будет возвращать функция
-	result := User{
-		Date:     date,
+	result := UserStats{
 		Username: username,
 	}
 
@@ -50,13 +54,8 @@ func getCommits(username string, date string) User {
 		return result
 	}
 
-	// Если поле даты пустое, функция поставит сегодняшнее число
-	if date == "" {
-		date = string(time.Now().Format("2006-01-02"))
-	}
-
 	// Обрезка ненужных частей страницы
-	pageStr = pageStr[100000:225000]
+	pageStr = pageStr[100000:195000]
 
 	// Поиск информации о звездах
 	left := strings.Index(pageStr, "Stars\n    <span title=") + 23
@@ -100,15 +99,45 @@ func getCommits(username string, date string) User {
 		result.Avatar = pageStr[left:right]
 	}
 
-	// Так выглядит html одной ячейки календаря:
-	// <rect width="11" height="11" x="-36" y="75" class="ContributionCalendar-day" rx="2" ry="2" data-count="1" data-date="2021-12-03" data-level="1">
+	return result
+}
 
-	// Обрезает ненужную часть страницы
-	pageStr = pageStr[50000:]
+// Функция получения коммитов
+func getCommits(username string, date string) UserCommits {
+	// Формирование и исполнение запроса
+	resp, err := http.Get("https://github.com/" + username)
+	if err != nil {
+		return UserCommits{}
+	}
+
+	// Запись респонса
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	// HTML полученной страницы в формате string
+	pageStr := string(body)
+
+	// Если поле даты пустое, функция поставит сегодняшнее число
+	if date == "" {
+		date = string(time.Now().Format("2006-01-02"))
+	}
+
+	// Структура, которую будет возвращать функция
+	result := UserCommits{
+		Date:     date,
+		Username: username,
+	}
+
+	// Проверка на страницу пользователя
+	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") {
+		return result
+	}
+
+	// Обрезка ненужных частей страницы
+	pageStr = pageStr[100000:]
 
 	// Указатель на ячейку нужной даты
 	i := strings.Index(pageStr, "data-date=\""+date)
-
 	// Проверка на существование нужной ячейки
 	if i != -1 {
 		for ; pageStr[i] != '<'; i-- {
@@ -129,13 +158,22 @@ func getCommits(username string, date string) User {
 	return result
 }
 
-// Функция отправки респонса
+// Функция отправки коммитов
 func sendCommits(writer http.ResponseWriter, request *http.Request) {
 	// Заголовок, определяющий тип данных респонса
 	writer.Header().Set("Content-Type", "application/json")
 
 	// Обработка данных и вывод результата
 	json.NewEncoder(writer).Encode(getCommits(mux.Vars(request)["id"], mux.Vars(request)["date"]))
+}
+
+// Функция отправки статистики
+func sendStats(writer http.ResponseWriter, request *http.Request) {
+	// Заголовок, определяющий тип данных респонса
+	writer.Header().Set("Content-Type", "application/json")
+
+	// Обработка данных и вывод результата
+	json.NewEncoder(writer).Encode(getStats(mux.Vars(request)["id"]))
 }
 
 func main() {
@@ -146,12 +184,19 @@ func main() {
 	router := mux.NewRouter()
 
 	// Маршруты
-	router.HandleFunc("/{id}", sendCommits).Methods("GET")
-	router.HandleFunc("/{id}/", sendCommits).Methods("GET")
-	router.HandleFunc("/{id}/{date}", sendCommits).Methods("GET")
-	router.HandleFunc("/{id}/{date}/", sendCommits).Methods("GET")
+	router.HandleFunc("/commits/{id}", sendCommits).Methods("GET")
+	router.HandleFunc("/commits/{id}/", sendCommits).Methods("GET")
+	router.HandleFunc("/commits/{id}/{date}", sendCommits).Methods("GET")
+	router.HandleFunc("/commits/{id}/{date}/", sendCommits).Methods("GET")
+
+	router.HandleFunc("/stats/{id}", sendStats).Methods("GET")
+	router.HandleFunc("/stats/{id}/", sendStats).Methods("GET")
 
 	// Запуск API
+
+	// Для Heroku
 	//log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
+
+	// Для локалхоста (127.0.0.1:8080/)
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
