@@ -31,6 +31,18 @@ type UserCommits struct {
 	Color    int    `json:"color"`
 }
 
+func find(str string, subStr string, char byte) (string, int) {
+	left := strings.Index(str, subStr) + len(subStr)
+	if left > len(subStr)-1 {
+		right := left
+		for ; str[right] != char; right++ {
+			// Доводит str[right] до символа char
+		}
+		return str[left:right], right
+	}
+	return "", 0
+}
+
 // Функция получения информации о пользователе
 func getInfo(username string) UserInfo {
 
@@ -57,70 +69,47 @@ func getInfo(username string) UserInfo {
 		return result
 	}
 
-	// Поиск имени пользователя
-	left := strings.Index(pageStr, "itemprop=\"n") + 16
-
-	// Если имя найдено, считывает его и записывает
-	if left > 16 {
-		right := left
-		for ; pageStr[right] != '<'; right++ {
-			// Доводит pageStr[right] до символа '<'
-		}
-
-		// Запись имени
-		result.Name = pageStr[left+11 : right-9]
-	}
-
 	// Поиск ссылки на аватар
-	left = strings.Index(pageStr, "https://avatars.githubusercontent.com/u")
+	data, i := find(pageStr, "rounded-1 avatar-user\" src=\"", '?')
 
-	// Если ссылка найдена, считывает её и записывает
-	if left != -1 {
-		right := left
-		for ; pageStr[right] != '?'; right++ {
-			// Доводит pageStr[right] до символа '?'
-		}
+	// Запись в результат
+	result.Avatar = data
 
-		// Запись ссылки
-		result.Avatar = pageStr[left:right]
-	}
-
-	// Поиск количества подписчиков
-	left = strings.Index(pageStr, "text-bold color-fg-default") + 28
-	if left > 27 {
-		right := left
-		for ; pageStr[right] != '<'; right++ {
-			// Доводит pageStr[right] до символа '<'
-		}
-		result.Followers, _ = strconv.Atoi(pageStr[left:right])
-	}
-
-	// Обрезка ненужных частей
-	pageStr = pageStr[left:195000]
-
-	// Поиск количества подписок
-	left = strings.Index(pageStr, "text-bold color-fg-default") + 28
-	if left > 27 {
-		right := left
-		for ; pageStr[right] != '<'; right++ {
-			// Доводит pageStr[right] до символа '<'
-		}
-		result.Following, _ = strconv.Atoi(pageStr[left:right])
-	}
+	// Отрезание ненужной части
+	pageStr = pageStr[i:195000]
 
 	// Поиск информации о звездах
-	left = strings.Index(pageStr, "Stars\n    <span title=") + 23
+	data, i = find(pageStr, "Stars\n    <span title=\"", '"')
 
-	// Если звезды есть, считывает их количество и записывает
-	if left > 23 {
-		right := left
-		for ; pageStr[right] != '"'; right++ {
-			// Доводит pageStr[right] до символа '"'
-		}
+	// Запись в результат
+	result.Stars, _ = strconv.Atoi(data)
 
-		// Запись звезд в результат
-		result.Stars, _ = strconv.Atoi(pageStr[left:right])
-	}
+	// Отрезание ненужной части
+	pageStr = pageStr[i:]
+
+	// Поиск имени пользователя
+	data, i = find(pageStr, "itemprop=\"name\">\n          ", '\n')
+
+	// Запись в результат
+	result.Name = data
+
+	// Отрезание ненужной части
+	pageStr = pageStr[i:]
+
+	// Поиск количества подписчиков
+	data, i = find(pageStr, "text-bold color-fg-default\">", '<')
+
+	// Запись в результат
+	result.Followers, _ = strconv.Atoi(data)
+
+	// Отрезание ненужной части
+	pageStr = pageStr[i:]
+
+	// Поиск количества подписок
+	data, _ = find(pageStr, "text-bold color-fg-default\">", '<')
+
+	// Запись в результат
+	result.Following, _ = strconv.Atoi(data)
 
 	return result
 }
