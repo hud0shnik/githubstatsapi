@@ -29,8 +29,9 @@ type UserCommits struct {
 	Color    int    `json:"color"`
 }
 
-// Функция получения статистики с сайта
-func getStats(username string) UserStats {
+// Функция получения информации о пользователе
+func getInfo(username string) UserStats {
+
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username)
 	if err != nil {
@@ -104,6 +105,7 @@ func getStats(username string) UserStats {
 
 // Функция получения коммитов
 func getCommits(username string, date string) UserCommits {
+
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username)
 	if err != nil {
@@ -138,6 +140,7 @@ func getCommits(username string, date string) UserCommits {
 
 	// Указатель на ячейку нужной даты
 	i := strings.Index(pageStr, "data-date=\""+date)
+
 	// Проверка на существование нужной ячейки
 	if i != -1 {
 		for ; pageStr[i] != '<'; i-- {
@@ -160,6 +163,7 @@ func getCommits(username string, date string) UserCommits {
 
 // Функция отправки коммитов
 func sendCommits(writer http.ResponseWriter, request *http.Request) {
+
 	// Заголовок, определяющий тип данных респонса
 	writer.Header().Set("Content-Type", "application/json")
 
@@ -167,16 +171,18 @@ func sendCommits(writer http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(writer).Encode(getCommits(mux.Vars(request)["id"], mux.Vars(request)["date"]))
 }
 
-// Функция отправки статистики
-func sendStats(writer http.ResponseWriter, request *http.Request) {
+// Функция отправки информации
+func sendInfo(writer http.ResponseWriter, request *http.Request) {
+
 	// Заголовок, определяющий тип данных респонса
 	writer.Header().Set("Content-Type", "application/json")
 
 	// Обработка данных и вывод результата
-	json.NewEncoder(writer).Encode(getStats(mux.Vars(request)["id"]))
+	json.NewEncoder(writer).Encode(getInfo(mux.Vars(request)["id"]))
 }
 
 func main() {
+
 	// Вывод времени начала работы
 	fmt.Println("API Start: " + string(time.Now().Format("2006-01-02 15:04:05")))
 
@@ -189,8 +195,8 @@ func main() {
 	router.HandleFunc("/commits/{id}/{date}", sendCommits).Methods("GET")
 	router.HandleFunc("/commits/{id}/{date}/", sendCommits).Methods("GET")
 
-	router.HandleFunc("/stats/{id}", sendStats).Methods("GET")
-	router.HandleFunc("/stats/{id}/", sendStats).Methods("GET")
+	router.HandleFunc("/info/{id}", sendInfo).Methods("GET")
+	router.HandleFunc("/info/{id}/", sendInfo).Methods("GET")
 
 	// Запуск API
 
