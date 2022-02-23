@@ -34,10 +34,12 @@
   
    ``` Json
   {
-  "username": "hud0shnik",
-  "name":     "Danila Egorov",
-  "avatar":   "https://avatars.githubusercontent.com/u/42404892",
-  "stars":    6
+  "username":  "hud0shnik",
+  "name":      "Danila Egorov",
+  "avatar":    "https://avatars.githubusercontent.com/u/42404892",
+  "stars":     6,
+  "followers": 13,
+  "following": 4
   }
    ```
    
@@ -79,10 +81,12 @@
   
    ``` Json
   {
-  "username": "hud0shnik",
-  "name":     "Danila Egorov",
-  "avatar":   "https://avatars.githubusercontent.com/u/42404892",
-  "stars":    6
+  "username":  "hud0shnik",
+  "name":      "Danila Egorov",
+  "avatar":    "https://avatars.githubusercontent.com/u/42404892",
+  "stars":     6,
+  "followers": 13,
+  "following": 4
   }
    ```
 </details>
