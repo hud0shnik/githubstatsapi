@@ -14,11 +14,13 @@ import (
 )
 
 // Структура для храния полной информации о пользователе
-type UserStats struct {
-	Username string `json:"username"`
-	Name     string `json:"name"`
-	Avatar   string `json:"avatar"`
-	Stars    int    `json:"stars"`
+type UserInfo struct {
+	Username  string `json:"username"`
+	Name      string `json:"name"`
+	Avatar    string `json:"avatar"`
+	Stars     int    `json:"stars"`
+	Followers int    `json:"followers"`
+	Following int    `json:"following"`
 }
 
 // Структура для храния информации о коммитах
@@ -30,12 +32,12 @@ type UserCommits struct {
 }
 
 // Функция получения информации о пользователе
-func getInfo(username string) UserStats {
+func getInfo(username string) UserInfo {
 
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username)
 	if err != nil {
-		return UserStats{}
+		return UserInfo{}
 	}
 
 	// Запись респонса
@@ -46,7 +48,7 @@ func getInfo(username string) UserStats {
 	pageStr := string(body)
 
 	// Структура, которую будет возвращать функция
-	result := UserStats{
+	result := UserInfo{
 		Username: username,
 	}
 
@@ -55,25 +57,8 @@ func getInfo(username string) UserStats {
 		return result
 	}
 
-	// Обрезка ненужных частей страницы
-	pageStr = pageStr[100000:195000]
-
-	// Поиск информации о звездах
-	left := strings.Index(pageStr, "Stars\n    <span title=") + 23
-
-	// Если звезды есть, считывает их количество и записывает
-	if left > 23 {
-		right := left
-		for ; pageStr[right] != '"'; right++ {
-			// Доводит pageStr[right] до символа '"'
-		}
-
-		// Запись звезд в результат
-		result.Stars, _ = strconv.Atoi(pageStr[left:right])
-	}
-
 	// Поиск имени пользователя
-	left = strings.Index(pageStr, "itemprop=\"n") + 16
+	left := strings.Index(pageStr, "itemprop=\"n") + 16
 
 	// Если имя найдено, считывает его и записывает
 	if left > 16 {
@@ -98,6 +83,43 @@ func getInfo(username string) UserStats {
 
 		// Запись ссылки
 		result.Avatar = pageStr[left:right]
+	}
+
+	// Поиск количества подписчиков
+	left = strings.Index(pageStr, "text-bold color-fg-default") + 28
+	if left > 27 {
+		right := left
+		for ; pageStr[right] != '<'; right++ {
+			// Доводит pageStr[right] до символа '<'
+		}
+		result.Followers, _ = strconv.Atoi(pageStr[left:right])
+	}
+
+	// Обрезка ненужных частей
+	pageStr = pageStr[left:195000]
+
+	// Поиск количества подписок
+	left = strings.Index(pageStr, "text-bold color-fg-default") + 28
+	if left > 27 {
+		right := left
+		for ; pageStr[right] != '<'; right++ {
+			// Доводит pageStr[right] до символа '<'
+		}
+		result.Following, _ = strconv.Atoi(pageStr[left:right])
+	}
+
+	// Поиск информации о звездах
+	left = strings.Index(pageStr, "Stars\n    <span title=") + 23
+
+	// Если звезды есть, считывает их количество и записывает
+	if left > 23 {
+		right := left
+		for ; pageStr[right] != '"'; right++ {
+			// Доводит pageStr[right] до символа '"'
+		}
+
+		// Запись звезд в результат
+		result.Stars, _ = strconv.Atoi(pageStr[left:right])
 	}
 
 	return result
