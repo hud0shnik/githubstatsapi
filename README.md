@@ -28,7 +28,7 @@
    <h3>Request sample </h3>
   
    ``` Elixir
-   GET https://hud0shnikgitapi.herokuapp.com/stats/hud0shnik
+   GET https://hud0shnikgitapi.herokuapp.com/info/hud0shnik
    ```
    <h3>Response sample </h3>
   
@@ -73,7 +73,7 @@
    <h3>Семпл запроса </h3>
   
    ``` Elixir
-   GET https://hud0shnikgitapi.herokuapp.com/stats/hud0shnik
+   GET https://hud0shnikgitapi.herokuapp.com/info/hud0shnik
    ```
    <h3>Семпл ответа </h3>
   
