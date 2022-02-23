@@ -31,15 +31,23 @@ type UserCommits struct {
 	Color    int    `json:"color"`
 }
 
+// Функция поиска, возвращает искомое значение и индекс
 func find(str string, subStr string, char byte) (string, int) {
+	// Поиск индекса начала нужной строки
 	left := strings.Index(str, subStr) + len(subStr)
+
+	// Проверка на существование нужной строки
 	if left > len(subStr)-1 {
+
+		// Крайняя часть искомой строки
 		right := left
+
 		for ; str[right] != char; right++ {
 			// Доводит str[right] до символа char
 		}
 		return str[left:right], right
 	}
+
 	return "", 0
 }
 
@@ -69,47 +77,46 @@ func getInfo(username string) UserInfo {
 		return result
 	}
 
-	// Поиск ссылки на аватар
-	data, i := find(pageStr, "rounded-1 avatar-user\" src=\"", '?')
+	// Индекс конца последней найденной строки
+	// и временная переменная для хранения значений, которые
+	// потом нужно будет перевести в int
+	i, temp := 0, ""
 
-	// Запись в результат
-	result.Avatar = data
+	// Поиск  и запись ссылки на аватар
+	result.Avatar, i = find(pageStr, "rounded-1 avatar-user\" src=\"", '?')
 
-	// Отрезание ненужной части
+	// Обрезка ненужной части
 	pageStr = pageStr[i:195000]
 
 	// Поиск информации о звездах
-	data, i = find(pageStr, "Stars\n    <span title=\"", '"')
+	temp, i = find(pageStr, "Stars\n    <span title=\"", '"')
 
 	// Запись в результат
-	result.Stars, _ = strconv.Atoi(data)
+	result.Stars, _ = strconv.Atoi(temp)
 
-	// Отрезание ненужной части
+	// Обрезка ненужной части
 	pageStr = pageStr[i:]
 
-	// Поиск имени пользователя
-	data, i = find(pageStr, "itemprop=\"name\">\n          ", '\n')
+	// Поиск и запись имени пользователя
+	result.Name, i = find(pageStr, "itemprop=\"name\">\n          ", '\n')
 
-	// Запись в результат
-	result.Name = data
-
-	// Отрезание ненужной части
+	// Обрезка ненужной части
 	pageStr = pageStr[i:]
 
 	// Поиск количества подписчиков
-	data, i = find(pageStr, "text-bold color-fg-default\">", '<')
+	temp, i = find(pageStr, "text-bold color-fg-default\">", '<')
 
 	// Запись в результат
-	result.Followers, _ = strconv.Atoi(data)
+	result.Followers, _ = strconv.Atoi(temp)
 
-	// Отрезание ненужной части
+	// Обрезка ненужной части
 	pageStr = pageStr[i:]
 
 	// Поиск количества подписок
-	data, _ = find(pageStr, "text-bold color-fg-default\">", '<')
+	temp, _ = find(pageStr, "text-bold color-fg-default\">", '<')
 
 	// Запись в результат
-	result.Following, _ = strconv.Atoi(data)
+	result.Following, _ = strconv.Atoi(temp)
 
 	return result
 }
