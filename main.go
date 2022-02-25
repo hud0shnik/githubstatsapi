@@ -22,6 +22,7 @@ type UserInfo struct {
 	Followers    int    `json:"followers"`
 	Following    int    `json:"following"`
 	Repositories int    `json:"repositories"`
+	Packages     int    `json:"packages"`
 }
 
 // Структура для храния информации о коммитах
@@ -91,6 +92,15 @@ func getInfo(username string) UserInfo {
 
 	// Обрезка ненужной части
 	pageStr = pageStr[i:195000]
+
+	// Поиск информации о пакетах
+	temp, i = find(pageStr, "Packages\n      <span title=\"", '"')
+
+	// Запись в результат
+	result.Packages, _ = strconv.Atoi(temp)
+
+	// Обрезка ненужной части
+	pageStr = pageStr[i:]
 
 	// Поиск информации о звездах
 	temp, i = find(pageStr, "Stars\n    <span title=\"", '"')
