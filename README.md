@@ -40,7 +40,8 @@
   "stars":        6,
   "followers":    13,
   "following":    4,
-  "repositories": 19
+  "repositories": 19,
+  "packages":     0
   }
    ```
    
@@ -88,7 +89,8 @@
   "stars":        6,
   "followers":    13,
   "following":    4,
-  "repositories": 19
+  "repositories": 19,
+  "packages":     0
   }
    ```
 </details>
