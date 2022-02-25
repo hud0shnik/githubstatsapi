@@ -15,12 +15,13 @@ import (
 
 // Структура для храния полной информации о пользователе
 type UserInfo struct {
-	Username  string `json:"username"`
-	Name      string `json:"name"`
-	Avatar    string `json:"avatar"`
-	Stars     int    `json:"stars"`
-	Followers int    `json:"followers"`
-	Following int    `json:"following"`
+	Username     string `json:"username"`
+	Name         string `json:"name"`
+	Avatar       string `json:"avatar"`
+	Stars        int    `json:"stars"`
+	Followers    int    `json:"followers"`
+	Following    int    `json:"following"`
+	Repositories int    `json:"repositories"`
 }
 
 // Структура для храния информации о коммитах
@@ -31,7 +32,7 @@ type UserCommits struct {
 	Color    int    `json:"color"`
 }
 
-// Функция поиска, возвращает искомое значение и индекс
+// Функция поиска, возвращает искомое значение и индекс конца
 func find(str string, subStr string, char byte) (string, int) {
 	// Поиск индекса начала нужной строки
 	left := strings.Index(str, subStr) + len(subStr)
@@ -82,8 +83,11 @@ func getInfo(username string) UserInfo {
 	// потом нужно будет перевести в int
 	i, temp := 0, ""
 
-	// Поиск  и запись ссылки на аватар
-	result.Avatar, i = find(pageStr, "rounded-1 avatar-user\" src=\"", '?')
+	// Поиск информации репозиториях
+	temp, i = find(pageStr, "Repositories\n    <span title=\"", '"')
+
+	// Запись в результат
+	result.Repositories, _ = strconv.Atoi(temp)
 
 	// Обрезка ненужной части
 	pageStr = pageStr[i:195000]
@@ -93,6 +97,12 @@ func getInfo(username string) UserInfo {
 
 	// Запись в результат
 	result.Stars, _ = strconv.Atoi(temp)
+
+	// Обрезка ненужной части
+	pageStr = pageStr[i:]
+
+	// Поиск  и запись ссылки на аватар
+	result.Avatar, i = find(pageStr, "avatar-user width-full border color-bg-default\" src=\"", '?')
 
 	// Обрезка ненужной части
 	pageStr = pageStr[i:]
