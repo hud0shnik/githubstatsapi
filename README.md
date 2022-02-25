@@ -24,7 +24,7 @@
    ```
    > ***color*** is color of the cell. There are 5 colors in total: from ***gray (0)*** to ***bright green (4)***
    
-   <h2>Stats</h2>
+   <h2>Info</h2>
    <h3>Request sample </h3>
   
    ``` Elixir
@@ -71,7 +71,7 @@
    ```
 > Параметр ***color*** - цвет ячейки. Всего есть 5 цветов: от ***серого (0)*** до ***ярко-зеленого (4)***
    
-   <h2>Статистика</h2>
+   <h2>Информация</h2>
    <h3>Семпл запроса </h3>
   
    ``` Elixir
