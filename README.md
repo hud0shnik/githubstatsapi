@@ -33,16 +33,16 @@
    <h3>Response sample </h3>
   
    ``` Json
-  {
+   {
   "username":     "hud0shnik",
   "name":         "Danila Egorov",
   "avatar":       "https://avatars.githubusercontent.com/u/42404892",
-  "stars":        6,
-  "followers":    13,
-  "following":    4,
-  "repositories": 19,
-  "packages":     0
-  }
+  "stars":        "6",
+  "followers":    "14",
+  "following":    "9",
+  "repositories": "19",
+  "packages":     "0"
+   }
    ```
    
 </details>
@@ -82,15 +82,15 @@
    <h3>Семпл ответа </h3>
   
    ``` Json
-  {
+   {
   "username":     "hud0shnik",
   "name":         "Danila Egorov",
   "avatar":       "https://avatars.githubusercontent.com/u/42404892",
-  "stars":        6,
-  "followers":    13,
-  "following":    4,
-  "repositories": 19,
-  "packages":     0
-  }
+  "stars":        "6",
+  "followers":    "14",
+  "following":    "9",
+  "repositories": "19",
+  "packages":     "0"
+   }
    ```
 </details>
