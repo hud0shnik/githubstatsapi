@@ -18,11 +18,11 @@ type UserInfo struct {
 	Username     string `json:"username"`
 	Name         string `json:"name"`
 	Avatar       string `json:"avatar"`
-	Stars        int    `json:"stars"`
-	Followers    int    `json:"followers"`
-	Following    int    `json:"following"`
-	Repositories int    `json:"repositories"`
-	Packages     int    `json:"packages"`
+	Stars        string `json:"stars"`
+	Followers    string `json:"followers"`
+	Following    string `json:"following"`
+	Repositories string `json:"repositories"`
+	Packages     string `json:"packages"`
 }
 
 // Структура для храния информации о коммитах
@@ -80,33 +80,24 @@ func getInfo(username string) UserInfo {
 	}
 
 	// Индекс конца последней найденной строки
-	// и временная переменная для хранения значений, которые
-	// потом нужно будет перевести в int
-	i, temp := 0, ""
+	i := 0
 
-	// Поиск информации репозиториях
-	temp, i = find(pageStr, "Repositories\n    <span title=\"", '"')
+	// Поиск и запись информации репозиториях
+	result.Repositories, i = find(pageStr, "Repositories\n    <span title=\"", '"')
 
 	// Запись в результат
-	result.Repositories, _ = strconv.Atoi(temp)
 
 	// Обрезка ненужной части
 	pageStr = pageStr[i:195000]
 
-	// Поиск информации о пакетах
-	temp, i = find(pageStr, "Packages\n      <span title=\"", '"')
-
-	// Запись в результат
-	result.Packages, _ = strconv.Atoi(temp)
+	// Поиск и запись информации о пакетах
+	result.Packages, i = find(pageStr, "Packages\n      <span title=\"", '"')
 
 	// Обрезка ненужной части
 	pageStr = pageStr[i:]
 
-	// Поиск информации о звездах
-	temp, i = find(pageStr, "Stars\n    <span title=\"", '"')
-
-	// Запись в результат
-	result.Stars, _ = strconv.Atoi(temp)
+	// Поиск и запись информации о звездах
+	result.Stars, i = find(pageStr, "Stars\n    <span title=\"", '"')
 
 	// Обрезка ненужной части
 	pageStr = pageStr[i:]
@@ -123,20 +114,14 @@ func getInfo(username string) UserInfo {
 	// Обрезка ненужной части
 	pageStr = pageStr[i:]
 
-	// Поиск количества подписчиков
-	temp, i = find(pageStr, "text-bold color-fg-default\">", '<')
-
-	// Запись в результат
-	result.Followers, _ = strconv.Atoi(temp)
+	// Поиск и запись количества подписчиков
+	result.Followers, i = find(pageStr, "text-bold color-fg-default\">", '<')
 
 	// Обрезка ненужной части
 	pageStr = pageStr[i:]
 
 	// Поиск количества подписок
-	temp, _ = find(pageStr, "text-bold color-fg-default\">", '<')
-
-	// Запись в результат
-	result.Following, _ = strconv.Atoi(temp)
+	result.Following, _ = find(pageStr, "text-bold color-fg-default\">", '<')
 
 	return result
 }
