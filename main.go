@@ -67,7 +67,7 @@ func getInfo(username string) UserInfo {
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	// HTML полученной страницы в формате string
-	pageStr := string(body)
+	pageStr := string(body)[:195000]
 
 	// Структура, которую будет возвращать функция
 	result := UserInfo{
@@ -82,46 +82,37 @@ func getInfo(username string) UserInfo {
 	// Индекс конца последней найденной строки
 	i := 0
 
-	// Поиск и запись информации репозиториях
+	/* -----------------------------------------------------------
+	# Далее поиск нужной информации и запись в результат		 #
+	# после каждого поиска тело сайта обрезается для оптимизации #
+	------------------------------------------------------------ */
+
+	// Репозитории
 	result.Repositories, i = find(pageStr, "Repositories\n    <span title=\"", '"')
-
-	// Запись в результат
-
-	// Обрезка ненужной части
 	pageStr = pageStr[i:195000]
 
-	// Поиск и запись информации о пакетах
+	// Пакеты
 	result.Packages, i = find(pageStr, "Packages\n      <span title=\"", '"')
-
-	// Обрезка ненужной части
 	pageStr = pageStr[i:]
 
-	// Поиск и запись информации о звездах
+	// Поставленные звезды
 	result.Stars, i = find(pageStr, "Stars\n    <span title=\"", '"')
-
-	// Обрезка ненужной части
 	pageStr = pageStr[i:]
 
-	// Поиск  и запись ссылки на аватар
-	result.Avatar, i = find(pageStr, "avatar-user width-full border color-bg-default\" src=\"", '?')
-
-	// Обрезка ненужной части
+	// Ссылка на аватар
+	result.Avatar, i = find(pageStr, "r color-bg-default\" src=\"", '?')
 	pageStr = pageStr[i:]
 
-	// Поиск и запись имени пользователя
-	result.Name, i = find(pageStr, "itemprop=\"name\">\n          ", '\n')
-
-	// Обрезка ненужной части
+	// Имя пользователя
+	result.Name, i = find(pageStr, "\"name\">\n          ", '\n')
 	pageStr = pageStr[i:]
 
-	// Поиск и запись количества подписчиков
-	result.Followers, i = find(pageStr, "text-bold color-fg-default\">", '<')
-
-	// Обрезка ненужной части
+	// Подписчики
+	result.Followers, i = find(pageStr, "lt\">", '<')
 	pageStr = pageStr[i:]
 
-	// Поиск количества подписок
-	result.Following, _ = find(pageStr, "text-bold color-fg-default\">", '<')
+	// Подписки
+	result.Following, _ = find(pageStr, "lt\">", '<')
 
 	return result
 }
