@@ -17,12 +17,12 @@ import (
 type UserInfo struct {
 	Username     string `json:"username"`
 	Name         string `json:"name"`
-	Avatar       string `json:"avatar"`
-	Stars        string `json:"stars"`
 	Followers    string `json:"followers"`
 	Following    string `json:"following"`
 	Repositories string `json:"repositories"`
 	Packages     string `json:"packages"`
+	Stars        string `json:"stars"`
+	Avatar       string `json:"avatar"`
 }
 
 // Структура для храния информации о коммитах
@@ -131,7 +131,7 @@ func getCommits(username string, date string) UserCommits {
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	// HTML полученной страницы в формате string
-	pageStr := string(body)
+	pageStr := string(body)[100000:]
 
 	// Если поле даты пустое, функция поставит сегодняшнее число
 	if date == "" {
@@ -149,10 +149,7 @@ func getCommits(username string, date string) UserCommits {
 		return result
 	}
 
-	// Обрезка ненужных частей страницы
-	pageStr = pageStr[100000:]
-
-	// Указатель на ячейку нужной даты
+	// Индекс ячейки с нужной датой
 	i := strings.Index(pageStr, "data-date=\""+date)
 
 	// Проверка на существование нужной ячейки
@@ -166,7 +163,7 @@ func getCommits(username string, date string) UserCommits {
 			return r == '"'
 		})
 
-		// Запись и обработка нужной информации
+		// Запись нужной информации
 		result.Color, _ = strconv.Atoi(values[19])
 		result.Commits, _ = strconv.Atoi(values[15])
 
