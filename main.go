@@ -15,14 +15,15 @@ import (
 
 // Структура для храния полной информации о пользователе
 type UserInfo struct {
-	Username     string `json:"username"`
-	Name         string `json:"name"`
-	Followers    string `json:"followers"`
-	Following    string `json:"following"`
-	Repositories string `json:"repositories"`
-	Packages     string `json:"packages"`
-	Stars        string `json:"stars"`
-	Avatar       string `json:"avatar"`
+	Username      string `json:"username"`
+	Name          string `json:"name"`
+	Followers     string `json:"followers"`
+	Following     string `json:"following"`
+	Repositories  string `json:"repositories"`
+	Packages      string `json:"packages"`
+	Stars         string `json:"stars"`
+	Contributions string `json:"contributions"`
+	Avatar        string `json:"avatar"`
 }
 
 // Структура для храния информации о коммитах
@@ -112,7 +113,11 @@ func getInfo(username string) UserInfo {
 	pageStr = pageStr[i:]
 
 	// Подписки
-	result.Following, _ = find(pageStr, "lt\">", '<')
+	result.Following, i = find(pageStr, "lt\">", '<')
+	pageStr = pageStr[i:]
+
+	// Контрибуции за год
+	result.Contributions, _ = find(pageStr, "l mb-2\">\n      ", '\n')
 
 	return result
 }
