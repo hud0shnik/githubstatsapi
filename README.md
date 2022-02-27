@@ -34,14 +34,15 @@
   
    ``` Json
    {
-  "username":     "hud0shnik",
-  "name":         "Danila Egorov",
-  "followers":    "14",
-  "following":    "9",
-  "repositories": "19",
-  "packages":     "0",
-  "stars":        "6",
-  "avatar":       "https://avatars.githubusercontent.com/u/42404892"
+  "username":      "hud0shnik",
+  "name":          "Danila Egorov",
+  "followers":     "14",
+  "following":     "9",
+  "repositories":  "19",
+  "packages":      "0",
+  "stars":         "6",
+  "contributions": "974",
+  "avatar":        "https://avatars.githubusercontent.com/u/42404892"
    }
    ```
    
@@ -83,14 +84,15 @@
   
    ``` Json
    {
-  "username":     "hud0shnik",
-  "name":         "Danila Egorov",
-  "followers":    "14",
-  "following":    "9",
-  "repositories": "19",
-  "packages":     "0",
-  "stars":        "6",
-  "avatar":       "https://avatars.githubusercontent.com/u/42404892"
+  "username":      "hud0shnik",
+  "name":          "Danila Egorov",
+  "followers":     "14",
+  "following":     "9",
+  "repositories":  "19",
+  "packages":      "0",
+  "stars":         "6",
+  "contributions": "974",
+  "avatar":        "https://avatars.githubusercontent.com/u/42404892"
    }
    ```
 </details>
