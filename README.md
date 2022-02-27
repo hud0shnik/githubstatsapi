@@ -36,12 +36,12 @@
    {
   "username":     "hud0shnik",
   "name":         "Danila Egorov",
-  "avatar":       "https://avatars.githubusercontent.com/u/42404892",
-  "stars":        "6",
   "followers":    "14",
   "following":    "9",
   "repositories": "19",
-  "packages":     "0"
+  "packages":     "0",
+  "stars":        "6",
+  "avatar":       "https://avatars.githubusercontent.com/u/42404892"
    }
    ```
    
@@ -85,12 +85,12 @@
    {
   "username":     "hud0shnik",
   "name":         "Danila Egorov",
-  "avatar":       "https://avatars.githubusercontent.com/u/42404892",
-  "stars":        "6",
   "followers":    "14",
   "following":    "9",
   "repositories": "19",
-  "packages":     "0"
+  "packages":     "0",
+  "stars":        "6",
+  "avatar":       "https://avatars.githubusercontent.com/u/42404892"
    }
    ```
 </details>
