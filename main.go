@@ -23,6 +23,7 @@ type UserInfo struct {
 	Packages      string `json:"packages"`
 	Stars         string `json:"stars"`
 	Contributions string `json:"contributions"`
+	Status        string `json:"status"`
 	Avatar        string `json:"avatar"`
 }
 
@@ -105,6 +106,10 @@ func getInfo(username string) UserInfo {
 
 	// Ссылка на аватар
 	result.Avatar, i = find(pageStr, "r color-bg-default\" src=\"", '?')
+	pageStr = pageStr[i:]
+
+	// Статус
+	result.Status, i = find(pageStr, "        <div>", '<')
 	pageStr = pageStr[i:]
 
 	// Имя пользователя
