@@ -68,7 +68,7 @@ func getInfo(username string) UserInfo {
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	// HTML полученной страницы в формате string
-	pageStr := string(body)[:]
+	pageStr := string(body)
 
 	// Структура, которую будет возвращать функция
 	result := UserInfo{
