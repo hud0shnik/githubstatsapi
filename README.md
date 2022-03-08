@@ -42,6 +42,7 @@
   "packages":      "0",
   "stars":         "6",
   "contributions": "974",
+  "status": "Thinkin' about new API",
   "avatar":        "https://avatars.githubusercontent.com/u/42404892"
    }
    ```
@@ -92,6 +93,7 @@
   "packages":      "0",
   "stars":         "6",
   "contributions": "974",
+  "status": "Thinkin' about new API",
   "avatar":        "https://avatars.githubusercontent.com/u/42404892"
    }
    ```
