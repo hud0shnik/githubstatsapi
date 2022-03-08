@@ -125,8 +125,13 @@ func getInfo(username string) UserInfo {
 // Функция получения коммитов
 func getCommits(username string, date string) UserCommits {
 
+	// Если поле даты пустое, функция поставит сегодняшнее число
+	if date == "" {
+		date = string(time.Now().Format("2006-01-02"))
+	}
+
 	// Формирование и исполнение запроса
-	resp, err := http.Get("https://github.com/" + username)
+	resp, err := http.Get("https://github.com/" + username + "?tab=overview&from=" + date)
 	if err != nil {
 		return UserCommits{}
 	}
@@ -138,20 +143,10 @@ func getCommits(username string, date string) UserCommits {
 	// HTML полученной страницы в формате string
 	pageStr := string(body)[100000:]
 
-	// Если поле даты пустое, функция поставит сегодняшнее число
-	if date == "" {
-		date = string(time.Now().Format("2006-01-02"))
-	}
-
 	// Структура, которую будет возвращать функция
 	result := UserCommits{
 		Date:     date,
 		Username: username,
-	}
-
-	// Проверка на страницу пользователя
-	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") {
-		return result
 	}
 
 	// Индекс ячейки с нужной датой
