@@ -68,7 +68,7 @@ func getInfo(username string) UserInfo {
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	// HTML полученной страницы в формате string
-	pageStr := string(body)[:195000]
+	pageStr := string(body)[:]
 
 	// Структура, которую будет возвращать функция
 	result := UserInfo{
@@ -80,6 +80,9 @@ func getInfo(username string) UserInfo {
 		return result
 	}
 
+	// Уберает лишнюю часть
+	pageStr = pageStr[:strings.Index(pageStr, "js-calendar-graph-svg")]
+
 	// Индекс конца последней найденной строки
 	i := 0
 
@@ -90,7 +93,7 @@ func getInfo(username string) UserInfo {
 
 	// Репозитории
 	result.Repositories, i = find(pageStr, "Repositories\n    <span title=\"", '"')
-	pageStr = pageStr[i:195000]
+	pageStr = pageStr[i:]
 
 	// Пакеты
 	result.Packages, i = find(pageStr, "Packages\n      <span title=\"", '"')
