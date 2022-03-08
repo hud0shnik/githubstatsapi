@@ -55,81 +55,6 @@ func find(str string, subStr string, char byte) (string, int) {
 	return "", 0
 }
 
-// Функция получения информации о пользователе
-func getInfo(username string) UserInfo {
-
-	// Формирование и исполнение запроса
-	resp, err := http.Get("https://github.com/" + username)
-	if err != nil {
-		return UserInfo{}
-	}
-
-	// Запись респонса
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	// HTML полученной страницы в формате string
-	pageStr := string(body)
-
-	// Структура, которую будет возвращать функция
-	result := UserInfo{
-		Username: username,
-	}
-
-	// Проверка на страницу пользователя
-	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") {
-		return result
-	}
-
-	// Уберает лишнюю часть
-	pageStr = pageStr[:strings.Index(pageStr, "js-calendar-graph-svg")]
-
-	// Индекс конца последней найденной строки
-	i := 0
-
-	/* -----------------------------------------------------------
-	# Далее поиск нужной информации и запись в результат		 #
-	# после каждого поиска тело сайта обрезается для оптимизации #
-	------------------------------------------------------------ */
-
-	// Репозитории
-	result.Repositories, i = find(pageStr, "Repositories\n    <span title=\"", '"')
-	pageStr = pageStr[i:]
-
-	// Пакеты
-	result.Packages, i = find(pageStr, "Packages\n      <span title=\"", '"')
-	pageStr = pageStr[i:]
-
-	// Поставленные звезды
-	result.Stars, i = find(pageStr, "Stars\n    <span title=\"", '"')
-	pageStr = pageStr[i:]
-
-	// Ссылка на аватар
-	result.Avatar, i = find(pageStr, "r color-bg-default\" src=\"", '?')
-	pageStr = pageStr[i:]
-
-	// Статус
-	result.Status, i = find(pageStr, "        <div>", '<')
-	pageStr = pageStr[i:]
-
-	// Имя пользователя
-	result.Name, i = find(pageStr, "\"name\">\n          ", '\n')
-	pageStr = pageStr[i:]
-
-	// Подписчики
-	result.Followers, i = find(pageStr, "lt\">", '<')
-	pageStr = pageStr[i:]
-
-	// Подписки
-	result.Following, i = find(pageStr, "lt\">", '<')
-	pageStr = pageStr[i:]
-
-	// Контрибуции за год
-	result.Contributions, _ = find(pageStr, "l mb-2\">\n      ", '\n')
-
-	return result
-}
-
 // Функция получения коммитов
 func getCommits(username string, date string) UserCommits {
 
@@ -176,6 +101,81 @@ func getCommits(username string, date string) UserCommits {
 		result.Commits, _ = strconv.Atoi(values[15])
 
 	}
+
+	return result
+}
+
+// Функция получения информации о пользователе
+func getInfo(username string) UserInfo {
+
+	// Формирование и исполнение запроса
+	resp, err := http.Get("https://github.com/" + username)
+	if err != nil {
+		return UserInfo{}
+	}
+
+	// Запись респонса
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	// HTML полученной страницы в формате string
+	pageStr := string(body)
+
+	// Структура, которую будет возвращать функция
+	result := UserInfo{
+		Username: username,
+	}
+
+	// Проверка на страницу пользователя
+	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") {
+		return result
+	}
+
+	// Убирает лишнюю часть
+	pageStr = pageStr[:strings.Index(pageStr, "js-calendar-graph-svg")]
+
+	// Индекс конца последней найденной строки
+	i := 0
+
+	/* -----------------------------------------------------------
+	# Далее происходит заполнение полей функцией find			 #
+	# после каждого поиска тело сайта обрезается для оптимизации #
+	------------------------------------------------------------ */
+
+	// Репозитории
+	result.Repositories, i = find(pageStr, "Repositories\n    <span title=\"", '"')
+	pageStr = pageStr[i:]
+
+	// Пакеты
+	result.Packages, i = find(pageStr, "Packages\n      <span title=\"", '"')
+	pageStr = pageStr[i:]
+
+	// Поставленные звезды
+	result.Stars, i = find(pageStr, "Stars\n    <span title=\"", '"')
+	pageStr = pageStr[i:]
+
+	// Ссылка на аватар
+	result.Avatar, i = find(pageStr, "r color-bg-default\" src=\"", '?')
+	pageStr = pageStr[i:]
+
+	// Статус
+	result.Status, i = find(pageStr, "        <div>", '<')
+	pageStr = pageStr[i:]
+
+	// Имя пользователя
+	result.Name, i = find(pageStr, "\"name\">\n          ", '\n')
+	pageStr = pageStr[i:]
+
+	// Подписчики
+	result.Followers, i = find(pageStr, "lt\">", '<')
+	pageStr = pageStr[i:]
+
+	// Подписки
+	result.Following, i = find(pageStr, "lt\">", '<')
+	pageStr = pageStr[i:]
+
+	// Контрибуции за год
+	result.Contributions, _ = find(pageStr, "l mb-2\">\n      ", '\n')
 
 	return result
 }
