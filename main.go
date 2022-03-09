@@ -27,6 +27,14 @@ type UserInfo struct {
 	Avatar        string `json:"avatar"`
 }
 
+// Структура для храния информации о репозитории
+type RepoInfo struct {
+	Username string `json:"username"`
+	Reponame string `json:"reponame"`
+	Commits  string `json:"commits"`
+	Branches string `json:"branches"`
+}
+
 // Структура для храния информации о коммитах
 type UserCommits struct {
 	Date     string `json:"date"`
@@ -101,6 +109,52 @@ func getCommits(username string, date string) UserCommits {
 		result.Commits, _ = strconv.Atoi(values[15])
 
 	}
+
+	return result
+}
+
+// Функция получения информации о репозитории
+func getRepoInfo(username string, reponame string) RepoInfo {
+
+	// Формирование и исполнение запроса
+	resp, err := http.Get("https://github.com/" + username + "/" + reponame)
+	if err != nil {
+		return RepoInfo{}
+	}
+
+	// Запись респонса
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	// HTML полученной страницы в формате string
+	pageStr := string(body)
+
+	// Структура, которую будет возвращать функция
+	result := RepoInfo{
+		Username: username,
+		Reponame: reponame,
+	}
+
+	// Проверка на репозиторий
+	if !strings.Contains(pageStr, "name=\"selected-link\" value=\"repo_source\"") {
+		return result
+	}
+
+	// Индекс конца последней найденной строки
+	i := 0
+
+	/* -----------------------------------------------------------
+	# Далее происходит заполнение полей функцией find			 #
+	# после каждого поиска тело сайта обрезается для оптимизации #
+	------------------------------------------------------------ */
+
+	// Ветки 1145
+	result.Branches, i = find(pageStr, "75 0 01-1.5 0z\"></path>\n</svg>\n          <strong>", '<')
+	pageStr = pageStr[i:]
+
+	// Коммиты 1209
+	result.Commits, i = find(pageStr, "<span class=\"d-none d-sm-inline\">\n                    <strong>", '<')
+	pageStr = pageStr[i:]
 
 	return result
 }
@@ -190,7 +244,17 @@ func sendCommits(writer http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(writer).Encode(getCommits(mux.Vars(request)["id"], mux.Vars(request)["date"]))
 }
 
-// Функция отправки информации
+// Функция отправки информации о репозитории
+func sendRepoInfo(writer http.ResponseWriter, request *http.Request) {
+
+	// Заголовок, определяющий тип данных респонса
+	writer.Header().Set("Content-Type", "application/json")
+
+	// Обработка данных и вывод результата
+	json.NewEncoder(writer).Encode(getRepoInfo(mux.Vars(request)["id"], mux.Vars(request)["repo"]))
+}
+
+// Функция отправки информации о пользователе
 func sendInfo(writer http.ResponseWriter, request *http.Request) {
 
 	// Заголовок, определяющий тип данных респонса
@@ -216,6 +280,9 @@ func main() {
 
 	router.HandleFunc("/info/{id}", sendInfo).Methods("GET")
 	router.HandleFunc("/info/{id}/", sendInfo).Methods("GET")
+
+	router.HandleFunc("/repo/{id}/{repo}", sendRepoInfo).Methods("GET")
+	router.HandleFunc("/repo/{id}/{repo}/", sendRepoInfo).Methods("GET")
 
 	// Запуск API
 
