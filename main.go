@@ -33,6 +33,7 @@ type RepoInfo struct {
 	Reponame string `json:"reponame"`
 	Commits  string `json:"commits"`
 	Branches string `json:"branches"`
+	Tags     string `json:"tags"`
 }
 
 // Структура для храния информации о коммитах
@@ -152,9 +153,12 @@ func getRepoInfo(username string, reponame string) RepoInfo {
 	result.Branches, i = find(pageStr, "75 0 01-1.5 0z\"></path>\n</svg>\n          <strong>", '<')
 	pageStr = pageStr[i:]
 
-	// Коммиты 1209
-	result.Commits, i = find(pageStr, "<span class=\"d-none d-sm-inline\">\n                    <strong>", '<')
+	// Теги 1150
+	result.Tags, i = find(pageStr, "1 1 0 000-2z\"></path>\n</svg>\n        <strong>", '<')
 	pageStr = pageStr[i:]
+
+	// Коммиты 1209
+	result.Commits, _ = find(pageStr, "<span class=\"d-none d-sm-inline\">\n                    <strong>", '<')
 
 	return result
 }
