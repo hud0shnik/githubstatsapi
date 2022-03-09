@@ -42,8 +42,24 @@
   "packages":      "0",
   "stars":         "6",
   "contributions": "974",
-  "status": "Thinkin' about new API",
+  "status":        "Thinkin' about new API",
   "avatar":        "https://avatars.githubusercontent.com/u/42404892"
+   }
+   ```
+   <h2>Repo</h2>
+   <h3>Request sample </h3>
+  
+   ``` Elixir
+   GET https://hud0shnikgitapi.herokuapp.com/repo/hud0shnik/GithubStatsAPI
+   ```
+   <h3>Response sample </h3>
+  
+   ``` Json
+   {
+  "username": "hud0shnik",
+  "reponame": "GithubStatsAPI",
+  "commits":  "46",
+  "branches": "1"
    }
    ```
    
@@ -95,6 +111,23 @@
   "contributions": "974",
   "status": "Thinkin' about new API",
   "avatar":        "https://avatars.githubusercontent.com/u/42404892"
+   }
+   ```
+   
+   <h2>Репозиторий</h2>
+   <h3>Семпл запроса </h3>
+  
+   ``` Elixir
+   GET https://hud0shnikgitapi.herokuapp.com/repo/hud0shnik/GithubStatsAPI
+   ```
+   <h3>Семпл ответа </h3>
+  
+   ``` Json
+   {
+  "username": "hud0shnik",
+  "reponame": "GithubStatsAPI",
+  "commits":  "46",
+  "branches": "1"
    }
    ```
 </details>
