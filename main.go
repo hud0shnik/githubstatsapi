@@ -43,7 +43,7 @@ type UserCommits struct {
 	Color    int    `json:"color"`
 }
 
-// Функция поиска, возвращает искомое значение и индекс конца
+// Функция поиска. Возвращает искомое значение и индекс
 func find(str string, subStr string, char byte) (string, int) {
 	// Поиск индекса начала нужной строки
 	left := strings.Index(str, subStr) + len(subStr)
@@ -160,7 +160,7 @@ func getRepoInfo(username string, reponame string) RepoInfo {
 }
 
 // Функция получения информации о пользователе
-func getInfo(username string) UserInfo {
+func getUserInfo(username string) UserInfo {
 
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username)
@@ -255,13 +255,13 @@ func sendRepoInfo(writer http.ResponseWriter, request *http.Request) {
 }
 
 // Функция отправки информации о пользователе
-func sendInfo(writer http.ResponseWriter, request *http.Request) {
+func sendUserInfo(writer http.ResponseWriter, request *http.Request) {
 
 	// Заголовок, определяющий тип данных респонса
 	writer.Header().Set("Content-Type", "application/json")
 
 	// Обработка данных и вывод результата
-	json.NewEncoder(writer).Encode(getInfo(mux.Vars(request)["id"]))
+	json.NewEncoder(writer).Encode(getUserInfo(mux.Vars(request)["id"]))
 }
 
 func main() {
@@ -278,8 +278,8 @@ func main() {
 	router.HandleFunc("/commits/{id}/{date}", sendCommits).Methods("GET")
 	router.HandleFunc("/commits/{id}/{date}/", sendCommits).Methods("GET")
 
-	router.HandleFunc("/info/{id}", sendInfo).Methods("GET")
-	router.HandleFunc("/info/{id}/", sendInfo).Methods("GET")
+	router.HandleFunc("/info/{id}", sendUserInfo).Methods("GET")
+	router.HandleFunc("/info/{id}/", sendUserInfo).Methods("GET")
 
 	router.HandleFunc("/repo/{id}/{repo}", sendRepoInfo).Methods("GET")
 	router.HandleFunc("/repo/{id}/{repo}/", sendRepoInfo).Methods("GET")
