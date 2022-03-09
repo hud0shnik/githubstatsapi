@@ -34,6 +34,7 @@ type RepoInfo struct {
 	Commits  string `json:"commits"`
 	Branches string `json:"branches"`
 	Tags     string `json:"tags"`
+	Stars    string `json:"stars"`
 	Watching string `json:"watching"`
 }
 
@@ -163,7 +164,7 @@ func getRepoInfo(username string, reponame string) RepoInfo {
 	pageStr = pageStr[i:]
 
 	// Звезды 1594
-	result.Commits, i = find(pageStr, "41L8 2.694v.001z\"></path>\n</svg>\n    <strong>", '<')
+	result.Stars, i = find(pageStr, "41L8 2.694v.001z\"></path>\n</svg>\n    <strong>", '<')
 	pageStr = pageStr[i:]
 
 	// Просмотры 1604
