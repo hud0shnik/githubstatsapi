@@ -58,8 +58,11 @@
    {
   "username": "hud0shnik",
   "reponame": "GithubStatsAPI",
-  "commits":  "46",
-  "branches": "1"
+  "commits":  "50",
+  "branches": "1",
+  "tags":     "0",
+  "stars":    "2",
+  "watching": "1"
    }
    ```
    
@@ -126,8 +129,11 @@
    {
   "username": "hud0shnik",
   "reponame": "GithubStatsAPI",
-  "commits":  "46",
-  "branches": "1"
+  "commits":  "50",
+  "branches": "1",
+  "tags":     "0",
+  "stars":    "2",
+  "watching": "1"
    }
    ```
 </details>
