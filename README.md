@@ -62,7 +62,8 @@
   "branches": "1",
   "tags":     "0",
   "stars":    "2",
-  "watching": "1"
+  "watching": "1",
+  "forks": "0"
    }
    ```
    
@@ -133,7 +134,8 @@
   "branches": "1",
   "tags":     "0",
   "stars":    "2",
-  "watching": "1"
+  "watching": "1",
+  "forks": "0"
    }
    ```
 </details>
