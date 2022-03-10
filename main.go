@@ -36,6 +36,7 @@ type RepoInfo struct {
 	Tags     string `json:"tags"`
 	Stars    string `json:"stars"`
 	Watching string `json:"watching"`
+	Forks    string `json:"forks"`
 }
 
 // Структура для храния информации о коммитах
@@ -168,7 +169,11 @@ func getRepoInfo(username string, reponame string) RepoInfo {
 	pageStr = pageStr[i:]
 
 	// Просмотры
-	result.Watching, _ = find(pageStr, "00-4 2 2 0 000 4z\"></path>\n</svg>\n    <strong>", '<')
+	result.Watching, i = find(pageStr, "00-4 2 2 0 000 4z\"></path>\n</svg>\n    <strong>", '<')
+	pageStr = pageStr[i:]
+
+	// Форки
+	result.Forks, _ = find(pageStr, "100-1.5.75.75 0 000 1.5z\"></path>\n</svg>\n    <strong>", '<')
 
 	return result
 }
