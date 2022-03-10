@@ -140,7 +140,7 @@ func getRepoInfo(username string, reponame string) RepoInfo {
 
 	// Проверка на репозиторий
 	if !strings.Contains(pageStr, "name=\"selected-link\" value=\"repo_source\"") {
-		return result
+		return RepoInfo{}
 	}
 
 	// Индекс конца последней найденной строки
@@ -151,23 +151,23 @@ func getRepoInfo(username string, reponame string) RepoInfo {
 	# после каждого поиска тело сайта обрезается для оптимизации #
 	------------------------------------------------------------ */
 
-	// Ветки 1145
+	// Ветки
 	result.Branches, i = find(pageStr, "75 0 01-1.5 0z\"></path>\n</svg>\n          <strong>", '<')
 	pageStr = pageStr[i:]
 
-	// Теги 1150
+	// Теги
 	result.Tags, i = find(pageStr, "1 1 0 000-2z\"></path>\n</svg>\n        <strong>", '<')
 	pageStr = pageStr[i:]
 
-	// Коммиты 1209
+	// Коммиты
 	result.Commits, i = find(pageStr, "<span class=\"d-none d-sm-inline\">\n                    <strong>", '<')
 	pageStr = pageStr[i:]
 
-	// Звезды 1594
+	// Звезды
 	result.Stars, i = find(pageStr, "41L8 2.694v.001z\"></path>\n</svg>\n    <strong>", '<')
 	pageStr = pageStr[i:]
 
-	// Просмотры 1604
+	// Просмотры
 	result.Watching, _ = find(pageStr, "00-4 2 2 0 000 4z\"></path>\n</svg>\n    <strong>", '<')
 
 	return result
@@ -196,7 +196,7 @@ func getUserInfo(username string) UserInfo {
 
 	// Проверка на страницу пользователя
 	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") {
-		return result
+		return UserInfo{}
 	}
 
 	// Убирает лишнюю часть
@@ -292,8 +292,8 @@ func main() {
 	router.HandleFunc("/commits/{id}/{date}", sendCommits).Methods("GET")
 	router.HandleFunc("/commits/{id}/{date}/", sendCommits).Methods("GET")
 
-	router.HandleFunc("/info/{id}", sendUserInfo).Methods("GET")
-	router.HandleFunc("/info/{id}/", sendUserInfo).Methods("GET")
+	router.HandleFunc("/user/{id}", sendUserInfo).Methods("GET")
+	router.HandleFunc("/user/{id}/", sendUserInfo).Methods("GET")
 
 	router.HandleFunc("/repo/{id}/{repo}", sendRepoInfo).Methods("GET")
 	router.HandleFunc("/repo/{id}/{repo}/", sendRepoInfo).Methods("GET")
