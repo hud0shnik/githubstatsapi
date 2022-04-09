@@ -1,4 +1,4 @@
-# 🐙 API статистики пользоватя GitHub 📈
+# 🐙 My GitHub API 📈
 <details open="true">
    <summary> 🇬🇧 <b>English Version</b> 🇬🇧 </summary>
    
