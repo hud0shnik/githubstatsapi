@@ -13,7 +13,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Структура для храния полной информации о пользователе
+// Структура для хранения полной информации о пользователе
 type UserInfo struct {
 	Username      string `json:"username"`
 	Name          string `json:"name"`
@@ -27,7 +27,7 @@ type UserInfo struct {
 	Avatar        string `json:"avatar"`
 }
 
-// Структура для храния информации о репозитории
+// Структура для хранения информации о репозитории
 type RepoInfo struct {
 	Username string `json:"username"`
 	Reponame string `json:"reponame"`
@@ -39,7 +39,7 @@ type RepoInfo struct {
 	Forks    string `json:"forks"`
 }
 
-// Структура для храния информации о коммитах
+// Структура для хранения информации о коммитах
 type UserCommits struct {
 	Date     string `json:"date"`
 	Username string `json:"username"`
