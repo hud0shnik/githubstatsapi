@@ -63,7 +63,7 @@
   "tags":     "0",
   "stars":    "2",
   "watching": "1",
-  "forks": "0"
+  "forks":    "0"
    }
    ```
    
@@ -113,7 +113,7 @@
   "packages":      "0",
   "stars":         "6",
   "contributions": "974",
-  "status": "Thinkin' about new API",
+  "status":        "Thinkin' about new API",
   "avatar":        "https://avatars.githubusercontent.com/u/42404892"
    }
    ```
@@ -135,7 +135,7 @@
   "tags":     "0",
   "stars":    "2",
   "watching": "1",
-  "forks": "0"
+  "forks":    "0"
    }
    ```
 </details>
