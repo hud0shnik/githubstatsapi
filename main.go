@@ -204,6 +204,11 @@ func getUserInfo(username string) UserInfo {
 		return UserInfo{}
 	}
 
+	// Проверка на доступ к коммитам
+	if strings.Contains(pageStr, "class=\"octicon octicon-lock\">") {
+		return UserInfo{}
+	}
+
 	// Убирает лишнюю часть
 	pageStr = pageStr[:strings.Index(pageStr, "js-calendar-graph-svg")]
 
