@@ -47,21 +47,23 @@ type UserCommits struct {
 	Color    int    `json:"color"`
 }
 
-// Функция поиска. Возвращает искомое значение и индекс
-func find(str string, subStr string, char byte) (string, int) {
-	// Поиск индекса начала нужной строки
-	left := strings.Index(str, subStr) + len(subStr)
+// Функция поиска. Возвращает искомое значение и индекс последнего символа
+func find(str, subStr, stopChar string, start int) (string, int) {
+
+	// Обрезка левой границы поиска
+	str = str[start:]
 
 	// Проверка на существование нужной строки
-	if left > len(subStr)-1 {
+	if strings.Contains(str, subStr) {
 
-		// Крайняя часть искомой строки
-		right := left
+		// Поиск индекса начала нужной строки
+		left := strings.Index(str, subStr) + len(subStr)
 
-		for ; str[right] != char; right++ {
-			// Доводит str[right] до символа char
-		}
-		return str[left:right], right
+		// Поиск правой границы
+		right := left + strings.Index(str[left:], stopChar)
+
+		// Обрезка и вывод результата
+		return str[left:right], right + start
 	}
 
 	return "", 0
@@ -145,7 +147,7 @@ func getRepoInfo(username string, reponame string) RepoInfo {
 	}
 
 	// Индекс конца последней найденной строки
-	i := 0
+	left := 0
 
 	/* -----------------------------------------------------------
 	# Далее происходит заполнение полей функцией find			 #
@@ -194,6 +196,11 @@ func getUserInfo(username string) UserInfo {
 	// HTML полученной страницы в формате string
 	pageStr := string(body)
 
+	/*if err := os.WriteFile("sample.html", []byte(pageStr), 0666); err != nil {
+		log.Fatal(err)
+	}
+	*/
+
 	// Структура, которую будет возвращать функция
 	result := UserInfo{
 		Username: username,
@@ -205,55 +212,39 @@ func getUserInfo(username string) UserInfo {
 	}
 
 	// Проверка на доступ к коммитам
-	if strings.Contains(pageStr, "class=\"octicon octicon-lock\">") {
+	if !strings.Contains(pageStr, "class=\"octicon octicon-lock\">") {
 		return UserInfo{}
 	}
 
-	// Убирает лишнюю часть
-	pageStr = pageStr[:strings.Index(pageStr, "js-calendar-graph-svg")]
-
 	// Индекс конца последней найденной строки
-	i := 0
-
-	/* -----------------------------------------------------------
-	# Далее происходит заполнение полей функцией find			 #
-	# после каждого поиска тело сайта обрезается для оптимизации #
-	------------------------------------------------------------ */
+	left := 0
 
 	// Репозитории
-	result.Repositories, i = find(pageStr, "Repositories\n    <span title=\"", '"')
-	pageStr = pageStr[i:]
+	result.Repositories, left = find(pageStr, "Repositories\n    <span title=\"", "\"", left)
 
 	// Пакеты
-	result.Packages, i = find(pageStr, "Packages\n      <span title=\"", '"')
-	pageStr = pageStr[i:]
+	result.Packages, left = find(pageStr, "Packages\n      <span title=\"", "\"", left)
 
 	// Поставленные звезды
-	result.Stars, i = find(pageStr, "Stars\n    <span title=\"", '"')
-	pageStr = pageStr[i:]
+	result.Stars, left = find(pageStr, "Stars\n    <span title=\"", "\"", left)
 
 	// Ссылка на аватар
-	result.Avatar, i = find(pageStr, "r color-bg-default\" src=\"", '?')
-	pageStr = pageStr[i:]
+	result.Avatar, left = find(pageStr, "r color-bg-default\" src=\"", "?", left)
 
 	// Статус
-	result.Status, i = find(pageStr, "        <div>", '<')
-	pageStr = pageStr[i:]
+	result.Status, left = find(pageStr, "        <div>", "<", left)
 
 	// Имя пользователя
-	result.Name, i = find(pageStr, "\"name\">\n          ", '\n')
-	pageStr = pageStr[i:]
+	result.Name, left = find(pageStr, "\"name\">\n          ", "\n", left)
 
 	// Подписчики
-	result.Followers, i = find(pageStr, "lt\">", '<')
-	pageStr = pageStr[i:]
+	result.Followers, left = find(pageStr, "lt\">", "<", left)
 
 	// Подписки
-	result.Following, i = find(pageStr, "lt\">", '<')
-	pageStr = pageStr[i:]
+	result.Following, left = find(pageStr, "lt\">", "<", left)
 
 	// Контрибуции за год
-	result.Contributions, _ = find(pageStr, "l mb-2\">\n      ", '\n')
+	result.Contributions, _ = find(pageStr, "l mb-2\">\n      ", "\n", left)
 
 	return result
 }
