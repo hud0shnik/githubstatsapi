@@ -155,27 +155,22 @@ func getRepoInfo(username string, reponame string) RepoInfo {
 	------------------------------------------------------------ */
 
 	// Ветки
-	result.Branches, i = find(pageStr, "01-1.5 0z\"></path>\n</svg>\n          <strong>", '<')
-	pageStr = pageStr[i:]
+	result.Branches, left = find(pageStr, "01-1.5 0z\"></path>\n</svg>\n          <strong>", "<", left)
 
 	// Теги
-	result.Tags, i = find(pageStr, "000-2z\"></path>\n</svg>\n        <strong>", '<')
-	pageStr = pageStr[i:]
+	result.Tags, left = find(pageStr, "000-2z\"></path>\n</svg>\n        <strong>", "<", left)
 
 	// Коммиты
-	result.Commits, i = find(pageStr, "class=\"d-none d-sm-inline\">\n                    <strong>", '<')
-	pageStr = pageStr[i:]
+	result.Commits, left = find(pageStr, "class=\"d-none d-sm-inline\">\n                    <strong>", "<", left)
 
 	// Звезды
-	result.Stars, i = find(pageStr, "94v.001z\"></path>\n</svg>\n    <strong>", '<')
-	pageStr = pageStr[i:]
+	result.Stars, left = find(pageStr, "94v.001z\"></path>\n</svg>\n    <strong>", "<", left)
 
 	// Просмотры
-	result.Watching, i = find(pageStr, " 000 4z\"></path>\n</svg>\n    <strong>", '<')
-	pageStr = pageStr[i:]
+	result.Watching, left = find(pageStr, " 000 4z\"></path>\n</svg>\n    <strong>", "<", left)
 
 	// Форки
-	result.Forks, _ = find(pageStr, "5.75.75 0 000 1.5z\"></path>\n</svg>\n    <strong>", '<')
+	result.Forks, _ = find(pageStr, "5.75.75 0 000 1.5z\"></path>\n</svg>\n    <strong>", "<", left)
 
 	return result
 }
