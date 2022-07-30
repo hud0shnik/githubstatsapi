@@ -48,7 +48,7 @@ type UserCommits struct {
 }
 
 // Функция поиска. Возвращает искомое значение и индекс последнего символа
-func find(str, subStr, stopChar string, start int) (string, int) {
+func findWithIndex(str, subStr, stopChar string, start int) (string, int) {
 
 	// Обрезка левой границы поиска
 	str = str[start:]
@@ -67,6 +67,22 @@ func find(str, subStr, stopChar string, start int) (string, int) {
 	}
 
 	return "", 0
+}
+
+// Облегчённая функция поиска. Возвращает только искомое значение
+func find(str, subStr, stopChar string) string {
+
+	// Проверка на существование нужной строки
+	if strings.Contains(str, subStr) {
+
+		// Обрезка левой части
+		str = str[strings.Index(str, subStr)+len(subStr):]
+
+		// Обрезка правой части и вывод результата
+		return str[:strings.Index(str, stopChar)]
+	}
+
+	return ""
 }
 
 // Функция получения коммитов
@@ -90,6 +106,11 @@ func getCommits(username string, date string) UserCommits {
 	// HTML полученной страницы в формате string
 	pageStr := string(body)[100000:]
 
+	// Запись html в файл для тестирования
+	/*if err := os.WriteFile("sample.html", []byte(pageStr), 0666); err != nil {
+		log.Fatal(err)
+	}*/
+
 	// Структура, которую будет возвращать функция
 	result := UserCommits{
 		Date:     date,
@@ -99,21 +120,11 @@ func getCommits(username string, date string) UserCommits {
 	// Индекс ячейки с нужной датой
 	i := strings.Index(pageStr, "data-date=\""+date)
 
-	// Проверка на существование нужной ячейки
+	// Поиск и запись информации
 	if i != -1 {
-		for ; pageStr[i] != '<'; i-- {
-			// Доводит i до начала тега ячейки
-		}
-
-		// Получение параметров ячейки
-		values := strings.FieldsFunc(pageStr[i:i+150], func(r rune) bool {
-			return r == '"'
-		})
-
-		// Запись нужной информации
-		result.Color, _ = strconv.Atoi(values[19])
-		result.Commits, _ = strconv.Atoi(values[15])
-
+		pageStr = pageStr[i-22:]
+		result.Commits, _ = strconv.Atoi(find(pageStr, "data-count=\"", "\""))
+		result.Color, _ = strconv.Atoi(find(pageStr, "data-level=\"", "\""))
 	}
 
 	return result
@@ -155,22 +166,22 @@ func getRepoInfo(username string, reponame string) RepoInfo {
 	------------------------------------------------------------ */
 
 	// Ветки
-	result.Branches, left = find(pageStr, "01-1.5 0z\"></path>\n</svg>\n          <strong>", "<", left)
+	result.Branches, left = findWithIndex(pageStr, "01-1.5 0z\"></path>\n</svg>\n          <strong>", "<", left)
 
 	// Теги
-	result.Tags, left = find(pageStr, "000-2z\"></path>\n</svg>\n        <strong>", "<", left)
+	result.Tags, left = findWithIndex(pageStr, "000-2z\"></path>\n</svg>\n        <strong>", "<", left)
 
 	// Коммиты
-	result.Commits, left = find(pageStr, "class=\"d-none d-sm-inline\">\n                    <strong>", "<", left)
+	result.Commits, left = findWithIndex(pageStr, "class=\"d-none d-sm-inline\">\n                    <strong>", "<", left)
 
 	// Звезды
-	result.Stars, left = find(pageStr, "94v.001z\"></path>\n</svg>\n    <strong>", "<", left)
+	result.Stars, left = findWithIndex(pageStr, "94v.001z\"></path>\n</svg>\n    <strong>", "<", left)
 
 	// Просмотры
-	result.Watching, left = find(pageStr, " 000 4z\"></path>\n</svg>\n    <strong>", "<", left)
+	result.Watching, left = findWithIndex(pageStr, " 000 4z\"></path>\n</svg>\n    <strong>", "<", left)
 
 	// Форки
-	result.Forks, _ = find(pageStr, "5.75.75 0 000 1.5z\"></path>\n</svg>\n    <strong>", "<", left)
+	result.Forks, _ = findWithIndex(pageStr, "5.75.75 0 000 1.5z\"></path>\n</svg>\n    <strong>", "<", left)
 
 	return result
 }
@@ -191,10 +202,10 @@ func getUserInfo(username string) UserInfo {
 	// HTML полученной страницы в формате string
 	pageStr := string(body)
 
+	// Запись html в файл для тестирования
 	/*if err := os.WriteFile("sample.html", []byte(pageStr), 0666); err != nil {
 		log.Fatal(err)
-	}
-	*/
+	}*/
 
 	// Структура, которую будет возвращать функция
 	result := UserInfo{
@@ -215,31 +226,31 @@ func getUserInfo(username string) UserInfo {
 	left := 0
 
 	// Репозитории
-	result.Repositories, left = find(pageStr, "Repositories\n    <span title=\"", "\"", left)
+	result.Repositories, left = findWithIndex(pageStr, "Repositories\n    <span title=\"", "\"", left)
 
 	// Пакеты
-	result.Packages, left = find(pageStr, "Packages\n      <span title=\"", "\"", left)
+	result.Packages, left = findWithIndex(pageStr, "Packages\n      <span title=\"", "\"", left)
 
 	// Поставленные звезды
-	result.Stars, left = find(pageStr, "Stars\n    <span title=\"", "\"", left)
+	result.Stars, left = findWithIndex(pageStr, "Stars\n    <span title=\"", "\"", left)
 
 	// Ссылка на аватар
-	result.Avatar, left = find(pageStr, "r color-bg-default\" src=\"", "?", left)
+	result.Avatar, left = findWithIndex(pageStr, "r color-bg-default\" src=\"", "?", left)
 
 	// Статус
-	result.Status, left = find(pageStr, "        <div>", "<", left)
+	result.Status, left = findWithIndex(pageStr, "        <div>", "<", left)
 
 	// Имя пользователя
-	result.Name, left = find(pageStr, "\"name\">\n          ", "\n", left)
+	result.Name, left = findWithIndex(pageStr, "\"name\">\n          ", "\n", left)
 
 	// Подписчики
-	result.Followers, left = find(pageStr, "lt\">", "<", left)
+	result.Followers, left = findWithIndex(pageStr, "lt\">", "<", left)
 
 	// Подписки
-	result.Following, left = find(pageStr, "lt\">", "<", left)
+	result.Following, left = findWithIndex(pageStr, "lt\">", "<", left)
 
 	// Контрибуции за год
-	result.Contributions, _ = find(pageStr, "l mb-2\">\n      ", "\n", left)
+	result.Contributions, _ = findWithIndex(pageStr, "l mb-2\">\n      ", "\n", left)
 
 	return result
 }
