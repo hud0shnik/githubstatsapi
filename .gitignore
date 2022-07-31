@@ -1,3 +1,4 @@
-sample.html
-test/test.go
-reposample.html
+
+test/
+DEV/
+*.html
