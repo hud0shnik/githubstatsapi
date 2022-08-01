@@ -212,13 +212,8 @@ func getUserInfo(username string) UserInfo {
 		Username: username,
 	}
 
-	// Проверка на страницу пользователя
-	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") {
-		return UserInfo{}
-	}
-
-	// Проверка на доступ к коммитам
-	if !strings.Contains(pageStr, "class=\"octicon octicon-lock\">") {
+	// Проверка на страницу пользователя и доступ к коммитам
+	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") || !strings.Contains(pageStr, "class=\"octicon octicon-lock\">") {
 		return UserInfo{}
 	}
 
