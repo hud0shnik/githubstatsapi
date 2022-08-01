@@ -144,7 +144,12 @@ func getRepoInfo(username string, reponame string) RepoInfo {
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	// HTML полученной страницы в формате string
-	pageStr := string(body)
+	pageStr := string(body)[30000:]
+
+	// Запись html в файл для тестирования
+	/*if err := os.WriteFile("sampleRepo.html", []byte(pageStr), 0666); err != nil {
+		log.Fatal(err)
+	}*/
 
 	// Структура, которую будет возвращать функция
 	result := RepoInfo{
