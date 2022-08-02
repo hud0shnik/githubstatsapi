@@ -151,15 +151,15 @@ func getRepoInfo(username string, reponame string) RepoInfo {
 		log.Fatal(err)
 	}*/
 
+	// Проверка на репозиторий
+	if !strings.Contains(pageStr, "name=\"selected-link\" value=\"repo_source\"") {
+		return RepoInfo{}
+	}
+
 	// Структура, которую будет возвращать функция
 	result := RepoInfo{
 		Username: username,
 		Reponame: reponame,
-	}
-
-	// Проверка на репозиторий
-	if !strings.Contains(pageStr, "name=\"selected-link\" value=\"repo_source\"") {
-		return RepoInfo{}
 	}
 
 	// Индекс конца последней найденной строки
@@ -205,7 +205,7 @@ func getUserInfo(username string) UserInfo {
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	// HTML полученной страницы в формате string
-	pageStr := string(body)
+	pageStr := string(body)[55000:]
 
 	// Запись html в файл для тестирования
 	/*if err := os.WriteFile("sample.html", []byte(pageStr), 0666); err != nil {
@@ -218,7 +218,7 @@ func getUserInfo(username string) UserInfo {
 	}
 
 	// Проверка на страницу пользователя и доступ к коммитам
-	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") || !strings.Contains(pageStr, "class=\"octicon octicon-lock\">") {
+	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") || strings.Contains(pageStr, "class=\"octicon octicon-lock\">") {
 		return UserInfo{}
 	}
 
