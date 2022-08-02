@@ -212,14 +212,14 @@ func getUserInfo(username string) UserInfo {
 		log.Fatal(err)
 	}*/
 
-	// Структура, которую будет возвращать функция
-	result := UserInfo{
-		Username: username,
-	}
-
 	// Проверка на страницу пользователя и доступ к коммитам
 	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") || strings.Contains(pageStr, "class=\"octicon octicon-lock\">") {
 		return UserInfo{}
+	}
+
+	// Структура, которую будет возвращать функция
+	result := UserInfo{
+		Username: username,
 	}
 
 	// Индекс конца последней найденной строки
