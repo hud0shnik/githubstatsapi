@@ -289,6 +289,7 @@ func main() {
 	router := mux.NewRouter()
 
 	// Маршруты
+
 	router.HandleFunc("/commits/{id}", sendCommits).Methods("GET")
 	router.HandleFunc("/commits/{id}/", sendCommits).Methods("GET")
 	router.HandleFunc("/commits/{id}/{date}", sendCommits).Methods("GET")
