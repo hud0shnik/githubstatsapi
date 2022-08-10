@@ -218,9 +218,18 @@ func getUserInfo(username string) UserInfo {
 		log.Fatal(err)
 	}*/
 
-	// Проверка на страницу пользователя и доступ к коммитам
-	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") || strings.Contains(pageStr, "class=\"octicon octicon-lock\">") {
-		return UserInfo{}
+	// Проверка на страницу пользователя
+	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") {
+		return UserInfo{
+			Error: "user not found",
+		}
+	}
+
+	// Проверка на скрытие коммитов
+	if strings.Contains(pageStr, "class=\"octicon octicon-lock\">") {
+		return UserInfo{
+			Error: "user's activity is private",
+		}
 	}
 
 	// Структура, которую будет возвращать функция
