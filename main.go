@@ -141,7 +141,9 @@ func getRepoInfo(username string, reponame string) RepoInfo {
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username + "/" + reponame)
 	if err != nil {
-		return RepoInfo{}
+		return RepoInfo{
+			Error: "http.Get error",
+		}
 	}
 
 	// Запись респонса
@@ -197,7 +199,9 @@ func getUserInfo(username string) UserInfo {
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username)
 	if err != nil {
-		return UserInfo{}
+		return UserInfo{
+			Error: "http.Get error",
+		}
 	}
 
 	// Запись респонса
