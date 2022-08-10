@@ -13,6 +13,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type ErrorResponse struct {
+	Description string `json:"error"`
+}
+
 // Структура для хранения полной информации о пользователе
 type UserInfo struct {
 	Username      string `json:"username"`
