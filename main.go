@@ -160,7 +160,9 @@ func getRepoInfo(username string, reponame string) RepoInfo {
 
 	// Проверка на репозиторий
 	if !strings.Contains(pageStr, "name=\"selected-link\" value=\"repo_source\"") {
-		return RepoInfo{}
+		return RepoInfo{
+			Error: "repo doesn't exist",
+		}
 	}
 
 	// Структура, которую будет возвращать функция
