@@ -226,7 +226,7 @@ func getUserInfo(username string) UserInfo {
 	}
 
 	// Проверка на скрытие коммитов
-	if strings.Contains(pageStr, "class=\"octicon octicon-lock\">") {
+	if strings.Contains(pageStr, "'s activity is private</h4>") {
 		return UserInfo{
 			Error: "user's activity is private",
 		}
