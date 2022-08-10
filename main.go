@@ -13,6 +13,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Структура ошибки
 type ErrorResponse struct {
 	Description string `json:"error"`
 }
