@@ -99,7 +99,9 @@ func getCommits(username string, date string) UserCommits {
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username + "?tab=overview&from=" + date)
 	if err != nil {
-		return UserCommits{}
+		return UserCommits{
+			Error: "http.Get error",
+		}
 	}
 
 	// Запись респонса
