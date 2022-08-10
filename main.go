@@ -13,13 +13,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// Структура ошибки
-type ErrorResponse struct {
-	Description string `json:"error"`
-}
-
 // Структура для хранения полной информации о пользователе
 type UserInfo struct {
+	Error         string `json:"error"`
 	Username      string `json:"username"`
 	Name          string `json:"name"`
 	Followers     string `json:"followers"`
@@ -34,6 +30,7 @@ type UserInfo struct {
 
 // Структура для хранения информации о репозитории
 type RepoInfo struct {
+	Error    string `json:"error"`
 	Username string `json:"username"`
 	Reponame string `json:"reponame"`
 	Commits  string `json:"commits"`
@@ -46,6 +43,7 @@ type RepoInfo struct {
 
 // Структура для хранения информации о коммитах
 type UserCommits struct {
+	Error    string `json:"error"`
 	Date     string `json:"date"`
 	Username string `json:"username"`
 	Commits  int    `json:"commits"`
