@@ -37,18 +37,19 @@
    <h3>Response sample </h3>
   
    ``` Json
-   {
-  "username":      "hud0shnik",
-  "name":          "Danila Egorov",
-  "followers":     "14",
-  "following":     "9",
-  "repositories":  "19",
-  "packages":      "0",
-  "stars":         "6",
-  "contributions": "974",
-  "status":        "Thinkin' about new API",
-  "avatar":        "https://avatars.githubusercontent.com/u/42404892"
-   }
+  {
+  "error": "",
+  "username": "hud0shnik",
+  "name": "Danila Egorov",
+  "followers": "59",
+  "following": "0",
+  "repositories": "25",
+  "packages": "0",
+  "stars": "4",
+  "contributions": "1,980",
+  "status": "Drawin'",
+  "avatar": "https://avatars.githubusercontent.com/u/42404892"
+  }
    ```
    <h2>Repo</h2>
    <h3>Request sample </h3>
