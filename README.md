@@ -19,6 +19,7 @@
   
    ``` Json
   {
+  "error": "",
   "date":     "2022-01-21",
   "username": "hud0shnik",
   "commits":  9,
