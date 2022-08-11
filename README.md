@@ -52,7 +52,7 @@
   }
    ```
    <h2>Repo</h2>
-   <h3>Request sample </h3>
+   <h3>Request sample</h3>
   
    ``` Elixir
    GET https://hud0shnikgitapi.herokuapp.com/repo/hud0shnik/GithubStatsAPI
@@ -60,16 +60,17 @@
    <h3>Response sample </h3>
   
    ``` Json
-   {
+  {
+  "error": "",
   "username": "hud0shnik",
   "reponame": "GithubStatsAPI",
-  "commits":  "50",
+  "commits": "94",
   "branches": "1",
-  "tags":     "0",
-  "stars":    "2",
+  "tags": "0",
+  "stars": "7",
   "watching": "1",
-  "forks":    "0"
-   }
+  "forks": "0"
+  }
    ```
    
 </details>
