@@ -19,6 +19,7 @@
   
    ``` Json
   {
+  "error":    "",
   "date":     "2022-01-21",
   "username": "hud0shnik",
   "commits":  9,
@@ -36,21 +37,22 @@
    <h3>Response sample </h3>
   
    ``` Json
-   {
+  {
+  "error":         "",
   "username":      "hud0shnik",
   "name":          "Danila Egorov",
-  "followers":     "14",
-  "following":     "9",
-  "repositories":  "19",
+  "followers":     "59",
+  "following":     "0",
+  "repositories":  "25",
   "packages":      "0",
-  "stars":         "6",
-  "contributions": "974",
-  "status":        "Thinkin' about new API",
+  "stars":         "4",
+  "contributions": "1,980",
+  "status":        "Drawin'",
   "avatar":        "https://avatars.githubusercontent.com/u/42404892"
-   }
+  }
    ```
    <h2>Repo</h2>
-   <h3>Request sample </h3>
+   <h3>Request sample</h3>
   
    ``` Elixir
    GET https://hud0shnikgitapi.herokuapp.com/repo/hud0shnik/GithubStatsAPI
@@ -58,16 +60,17 @@
    <h3>Response sample </h3>
   
    ``` Json
-   {
+  {
+  "error":    "",
   "username": "hud0shnik",
   "reponame": "GithubStatsAPI",
-  "commits":  "50",
+  "commits":  "94",
   "branches": "1",
   "tags":     "0",
-  "stars":    "2",
+  "stars":    "7",
   "watching": "1",
   "forks":    "0"
-   }
+  }
    ```
    
 </details>
@@ -90,6 +93,7 @@
   
    ``` Json
   {
+  "error":    "",
   "date":     "2022-01-21",
   "username": "hud0shnik",
   "commits":  9,
@@ -107,18 +111,19 @@
    <h3>Семпл ответа </h3>
   
    ``` Json
-   {
+  {
+  "error":         "",
   "username":      "hud0shnik",
   "name":          "Danila Egorov",
-  "followers":     "14",
-  "following":     "9",
-  "repositories":  "19",
+  "followers":     "59",
+  "following":     "0",
+  "repositories":  "25",
   "packages":      "0",
-  "stars":         "6",
-  "contributions": "974",
-  "status":        "Thinkin' about new API",
+  "stars":         "4",
+  "contributions": "1,980",
+  "status":        "Drawin'",
   "avatar":        "https://avatars.githubusercontent.com/u/42404892"
-   }
+  }
    ```
    
    <h2>Репозиторий</h2>
@@ -130,15 +135,16 @@
    <h3>Семпл ответа </h3>
   
    ``` Json
-   {
+  {
+  "error":    "",
   "username": "hud0shnik",
   "reponame": "GithubStatsAPI",
-  "commits":  "50",
+  "commits":  "94",
   "branches": "1",
   "tags":     "0",
-  "stars":    "2",
+  "stars":    "7",
   "watching": "1",
   "forks":    "0"
-   }
+  }
    ```
 </details>
