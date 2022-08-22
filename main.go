@@ -256,7 +256,7 @@ func getUserInfo(username string) UserInfo {
 	result.Avatar, left = findWithIndex(pageStr, "r color-bg-default\" src=\"", "?", left)
 
 	// Статус
-	result.Status, left = findWithIndex(pageStr, "        <div>", "<", left)
+	result.Status, left = findWithIndex(pageStr, "        <div>", "</div>", left)
 
 	// Имя пользователя
 	result.Name, left = findWithIndex(pageStr, "\"name\">\n          ", "\n", left)
@@ -307,6 +307,7 @@ func main() {
 
 	// Вывод времени начала работы
 	fmt.Println("API Start: " + string(time.Now().Format("2006-01-02 15:04:05")))
+	fmt.Println("Port:\t" + os.Getenv("PORT"))
 
 	// Роутер
 	router := mux.NewRouter()
