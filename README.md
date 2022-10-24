@@ -9,11 +9,11 @@
    <h3>Request sample </h3>
   
    ``` Elixir
-   GET https://hud0shnikgitapi.herokuapp.com/commits/hud0shnik
+   https://githubstatsapi.vercel.app/api/commits?id=hud0shnik
    ```
   
    ``` Elixir
-   GET https://hud0shnikgitapi.herokuapp.com/commits/hud0shnik/2022-01-21
+   https://githubstatsapi.vercel.app/api/commits?id=hud0shnik&date=2022-01-21
    ```
    <h3>Response sample </h3>
   
@@ -32,7 +32,7 @@
    <h3>Request sample </h3>
   
    ``` Elixir
-   GET https://hud0shnikgitapi.herokuapp.com/user/hud0shnik
+   https://githubstatsapi.vercel.app/api/user?id=hud0shnik
    ```
    <h3>Response sample </h3>
   
@@ -55,7 +55,7 @@
    <h3>Request sample</h3>
   
    ``` Elixir
-   GET https://hud0shnikgitapi.herokuapp.com/repo/hud0shnik/GithubStatsAPI
+   https://githubstatsapi.vercel.app/api/repo?username=hud0shnik&reponame=OsuStatsApi
    ```
    <h3>Response sample </h3>
   
@@ -63,13 +63,13 @@
   {
   "error":    "",
   "username": "hud0shnik",
-  "reponame": "GithubStatsAPI",
-  "commits":  "94",
-  "branches": "1",
+  "reponame": "OsuStatsApi",
+  "commits":  "411",
+  "branches": "2",
   "tags":     "0",
-  "stars":    "7",
+  "stars":    "2",
   "watching": "1",
-  "forks":    "0"
+  "forks":    "1"
   }
    ```
    
@@ -83,11 +83,11 @@
    <h3>Семпл запроса </h3>
   
    ``` Elixir
-   GET https://hud0shnikgitapi.herokuapp.com/commits/hud0shnik
+   https://githubstatsapi.vercel.app/api/commits?id=hud0shnik
    ```
   
    ``` Elixir
-   GET https://hud0shnikgitapi.herokuapp.com/commits/hud0shnik/2022-01-21
+   https://githubstatsapi.vercel.app/api/commits?id=hud0shnik&date=2022-01-21
    ```
    <h3>Семпл ответа</h3>
   
@@ -106,7 +106,7 @@
    <h3>Семпл запроса </h3>
   
    ``` Elixir
-   GET https://hud0shnikgitapi.herokuapp.com/user/hud0shnik
+   https://githubstatsapi.vercel.app/api/user?id=hud0shnik
    ```
    <h3>Семпл ответа </h3>
   
@@ -130,7 +130,7 @@
    <h3>Семпл запроса </h3>
   
    ``` Elixir
-   GET https://hud0shnikgitapi.herokuapp.com/repo/hud0shnik/GithubStatsAPI
+   https://githubstatsapi.vercel.app/api/repo?username=hud0shnik&reponame=OsuStatsApi
    ```
    <h3>Семпл ответа </h3>
   
@@ -138,13 +138,13 @@
   {
   "error":    "",
   "username": "hud0shnik",
-  "reponame": "GithubStatsAPI",
-  "commits":  "94",
-  "branches": "1",
+  "reponame": "OsuStatsApi",
+  "commits":  "411",
+  "branches": "2",
   "tags":     "0",
-  "stars":    "7",
+  "stars":    "2",
   "watching": "1",
-  "forks":    "0"
+  "forks":    "1"
   }
-   ```
+  ```
 </details>
