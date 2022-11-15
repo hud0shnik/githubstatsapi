@@ -28,7 +28,7 @@ func GetRepoInfo(username string, reponame string) RepoInfo {
 	resp, err := http.Get("https://github.com/" + username + "/" + reponame)
 	if err != nil {
 		return RepoInfo{
-			Error: "http.Get error",
+			Error: "http get error",
 		}
 	}
 
@@ -84,21 +84,33 @@ func GetRepoInfo(username string, reponame string) RepoInfo {
 // Роут "/repo"
 func Repo(w http.ResponseWriter, r *http.Request) {
 
+	// Формирование заголовка респонса по статускоду
 	w.WriteHeader(http.StatusCreated)
+
+	// Передача в заголовок респонса типа данных
 	w.Header().Set("Content-Type", "application/json")
 
+	// Получение параметра имени пользователя из реквеста
 	username := r.URL.Query().Get("username")
+
+	// Если параметра нет, отправка ошибки
 	if username == "" {
 		http.NotFound(w, r)
 		return
 	}
+	// Получение параметра названия репозитория из реквеста
 	reponame := r.URL.Query().Get("reponame")
+
+	// Если параметра нет, отправка ошибки
 	if reponame == "" {
 		http.NotFound(w, r)
 		return
 	}
+
+	// Получение и запись статистики
 	resp := GetRepoInfo(username, reponame)
 
+	// Форматирование структуры в json и отправка пользователю
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
 		fmt.Print("Error: ", err)

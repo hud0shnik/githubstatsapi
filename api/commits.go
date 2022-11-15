@@ -31,7 +31,7 @@ func GetCommits(username string, date string) UserCommits {
 	resp, err := http.Get("https://github.com/" + username + "?tab=overview&from=" + date)
 	if err != nil {
 		return UserCommits{
-			Error: "http.Get error",
+			Error: "http get error",
 		}
 	}
 
@@ -71,17 +71,28 @@ func GetCommits(username string, date string) UserCommits {
 // Роут "/commits"
 func Commits(w http.ResponseWriter, r *http.Request) {
 
+	// Формирование заголовка респонса по статускоду
 	w.WriteHeader(http.StatusCreated)
+
+	// Передача в заголовок респонса типа данных
 	w.Header().Set("Content-Type", "application/json")
 
+	// Получение параметра id из реквеста
 	id := r.URL.Query().Get("id")
+
+	// Если параметра нет, отправка ошибки
 	if id == "" {
 		http.NotFound(w, r)
 		return
 	}
+
+	// Получение параметра даты из реквеста
 	date := r.URL.Query().Get("date")
+
+	// Получение и запись статистики
 	resp := GetCommits(id, date)
 
+	// Форматирование структуры в json и отправка пользователю
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
 		fmt.Print("Error: ", err)
