@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	api "gitAPI/api"
 	"log"
@@ -11,36 +10,6 @@ import (
 
 	"github.com/gorilla/mux"
 )
-
-// Функция отправки коммитов
-func sendCommits(writer http.ResponseWriter, request *http.Request) {
-
-	// Заголовок, определяющий тип данных респонса
-	writer.Header().Set("Content-Type", "application/json")
-
-	// Обработка данных и вывод результата
-	json.NewEncoder(writer).Encode(api.GetCommits(request.URL.Query().Get("id"), request.URL.Query().Get("date")))
-}
-
-// Функция отправки информации о репозитории
-func sendRepoInfo(writer http.ResponseWriter, request *http.Request) {
-
-	// Заголовок, определяющий тип данных респонса
-	writer.Header().Set("Content-Type", "application/json")
-
-	// Обработка данных и вывод результата
-	json.NewEncoder(writer).Encode(api.GetRepoInfo(request.URL.Query().Get("username"), request.URL.Query().Get("reponame")))
-}
-
-// Функция отправки информации о пользователе
-func sendUserInfo(writer http.ResponseWriter, request *http.Request) {
-
-	// Заголовок, определяющий тип данных респонса
-	writer.Header().Set("Content-Type", "application/json")
-
-	// Обработка данных и вывод результата
-	json.NewEncoder(writer).Encode(api.GetUserInfo(request.URL.Query().Get("id")))
-}
 
 func main() {
 
@@ -53,11 +22,11 @@ func main() {
 
 	// Маршруты
 
-	router.HandleFunc("/api/commits", sendCommits).Methods("GET")
+	router.HandleFunc("/api/commits", api.Commits).Methods("GET")
 
-	router.HandleFunc("/api/user", sendUserInfo).Methods("GET")
+	router.HandleFunc("/api/user", api.User).Methods("GET")
 
-	router.HandleFunc("/api/repo", sendRepoInfo).Methods("GET")
+	router.HandleFunc("/api/repo", api.Repo).Methods("GET")
 
 	// Запуск API
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
