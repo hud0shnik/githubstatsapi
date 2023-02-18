@@ -116,22 +116,22 @@ func GetUserInfo(username string) UserInfo {
 	result.Stars, left = findWithIndex(pageStr, "Stars\n    <span title=\"", "\"", left)
 
 	// Ссылка на аватар
-	result.Avatar, left = findWithIndex(pageStr, "r color-bg-default\" src=\"", "?", left)
+	result.Avatar, left = findWithIndex(pageStr, "<img style=\"height:auto;\" alt=\"Avatar\" src=\"", "\"", left)
 
 	// Статус
-	result.Status, left = findWithIndex(pageStr, "        <div>", "</div>", left)
+	result.Status, left = findWithIndex(pageStr, "status-message-wrapper f6 color-fg-default no-wrap \" >\n        <div>", "</div>", left)
 
 	// Имя пользователя
 	result.Name, left = findWithIndex(pageStr, "\"name\">\n          ", "\n", left)
 
 	// Подписчики
-	result.Followers, left = findWithIndex(pageStr, "lt\">", "<", left)
+	result.Followers, left = findWithIndex(pageStr, "<span class=\"text-bold color-fg-default\">", "<", left)
 
 	// Подписки
-	result.Following, left = findWithIndex(pageStr, "lt\">", "<", left)
+	result.Following, left = findWithIndex(pageStr, "<span class=\"text-bold color-fg-default\">", "<", left)
 
 	// Контрибуции за год
-	result.Contributions, _ = findWithIndex(pageStr, "l mb-2\">\n      ", "\n", left)
+	result.Contributions, _ = findWithIndex(pageStr, "<h2 class=\"f4 text-normal mb-2\">\n      ", "\n", left)
 
 	return result
 }
