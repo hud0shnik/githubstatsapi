@@ -10,6 +10,7 @@ import (
 
 // Структура для хранения информации о репозитории
 type RepoInfo struct {
+	Success  bool   `json:"success"`
 	Error    string `json:"error"`
 	Username string `json:"username"`
 	Reponame string `json:"reponame"`
@@ -53,6 +54,7 @@ func GetRepoInfo(username string, reponame string) RepoInfo {
 
 	// Структура, которую будет возвращать функция
 	result := RepoInfo{
+		Success:  true,
 		Username: username,
 		Reponame: reponame,
 	}

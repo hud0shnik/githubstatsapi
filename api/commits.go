@@ -12,6 +12,7 @@ import (
 
 // Структура для хранения информации о коммитах
 type UserCommits struct {
+	Success  bool   `json:"success"`
 	Error    string `json:"error"`
 	Date     string `json:"date"`
 	Username string `json:"username"`
@@ -58,6 +59,7 @@ func GetCommits(username string, date string) UserCommits {
 
 	// Поиск и запись информации
 	if i != -1 {
+		result.Success = true
 		pageStr = pageStr[i-22:]
 		result.Color, _ = strconv.Atoi(find(pageStr, "data-level=\"", "\""))
 		result.Commits, _ = strconv.Atoi(find(pageStr, "\">", " "))

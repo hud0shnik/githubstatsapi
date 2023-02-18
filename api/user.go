@@ -10,6 +10,7 @@ import (
 
 // Структура для хранения полной информации о пользователе
 type UserInfo struct {
+	Success       bool   `json:"success"`
 	Error         string `json:"error"`
 	Username      string `json:"username"`
 	Name          string `json:"name"`
@@ -100,6 +101,7 @@ func GetUserInfo(username string) UserInfo {
 
 	// Структура, которую будет возвращать функция
 	result := UserInfo{
+		Success:  true,
 		Username: username,
 	}
 
