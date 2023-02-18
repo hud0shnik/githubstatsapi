@@ -2,8 +2,8 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -84,12 +84,6 @@ func GetRepoInfo(username string, reponame string) RepoInfo {
 // Роут "/repo"
 func Repo(w http.ResponseWriter, r *http.Request) {
 
-	// Формирование заголовка респонса по статускоду
-	w.WriteHeader(http.StatusCreated)
-
-	// Передача в заголовок респонса типа данных
-	w.Header().Set("Content-Type", "application/json")
-
 	// Получение параметра имени пользователя из реквеста
 	username := r.URL.Query().Get("username")
 
@@ -98,6 +92,7 @@ func Repo(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+
 	// Получение параметра названия репозитория из реквеста
 	reponame := r.URL.Query().Get("reponame")
 
@@ -107,13 +102,19 @@ func Repo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Формирование заголовка респонса по статускоду
+	w.WriteHeader(http.StatusOK)
+
+	// Передача в заголовок респонса типа данных
+	w.Header().Set("Content-Type", "application/json")
+
 	// Получение и запись статистики
 	resp := GetRepoInfo(username, reponame)
 
 	// Форматирование структуры в json и отправка пользователю
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
-		fmt.Print("Error: ", err)
+		log.Printf("json.Marshal error: %s", err)
 	} else {
 		w.Write(jsonResp)
 	}

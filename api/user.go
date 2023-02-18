@@ -2,8 +2,8 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -139,12 +139,6 @@ func GetUserInfo(username string) UserInfo {
 // Роут "/user"
 func User(w http.ResponseWriter, r *http.Request) {
 
-	// Формирование заголовка респонса по статускоду
-	w.WriteHeader(http.StatusCreated)
-
-	// Передача в заголовок респонса типа данных
-	w.Header().Set("Content-Type", "application/json")
-
 	// Получение параметра id из реквеста
 	id := r.URL.Query().Get("id")
 
@@ -154,13 +148,19 @@ func User(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Формирование заголовка респонса по статускоду
+	w.WriteHeader(http.StatusOK)
+
+	// Передача в заголовок респонса типа данных
+	w.Header().Set("Content-Type", "application/json")
+
 	// Получение и запись статистики
 	resp := GetUserInfo(id)
 
 	// Форматирование структуры в json и отправка пользователю
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
-		fmt.Print("Error: ", err)
+		log.Printf("json.Marshal error: %s", err)
 	} else {
 		w.Write(jsonResp)
 	}

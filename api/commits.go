@@ -2,8 +2,8 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -71,12 +71,6 @@ func GetCommits(username string, date string) UserCommits {
 // Роут "/commits"
 func Commits(w http.ResponseWriter, r *http.Request) {
 
-	// Формирование заголовка респонса по статускоду
-	w.WriteHeader(http.StatusCreated)
-
-	// Передача в заголовок респонса типа данных
-	w.Header().Set("Content-Type", "application/json")
-
 	// Получение параметра id из реквеста
 	id := r.URL.Query().Get("id")
 
@@ -85,6 +79,12 @@ func Commits(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+
+	// Формирование заголовка респонса по статускоду
+	w.WriteHeader(http.StatusOK)
+
+	// Передача в заголовок респонса типа данных
+	w.Header().Set("Content-Type", "application/json")
 
 	// Получение параметра даты из реквеста
 	date := r.URL.Query().Get("date")
@@ -95,7 +95,7 @@ func Commits(w http.ResponseWriter, r *http.Request) {
 	// Форматирование структуры в json и отправка пользователю
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
-		fmt.Print("Error: ", err)
+		log.Printf("json.Marshal error: %s", err)
 	} else {
 		w.Write(jsonResp)
 	}
