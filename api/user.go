@@ -150,20 +150,15 @@ func User(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Формирование заголовка респонса по статускоду
-	w.WriteHeader(http.StatusOK)
-
 	// Передача в заголовок респонса типа данных
 	w.Header().Set("Content-Type", "application/json")
 
-	// Получение и запись статистики
-	resp := GetUserInfo(id)
-
 	// Форматирование структуры в json и отправка пользователю
-	jsonResp, err := json.Marshal(resp)
+	jsonResp, err := json.Marshal(GetUserInfo(id))
 	if err != nil {
 		log.Printf("json.Marshal error: %s", err)
 	} else {
+		w.WriteHeader(http.StatusOK)
 		w.Write(jsonResp)
 	}
 }

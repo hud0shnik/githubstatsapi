@@ -82,23 +82,18 @@ func Commits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Формирование заголовка респонса по статускоду
-	w.WriteHeader(http.StatusOK)
-
 	// Передача в заголовок респонса типа данных
 	w.Header().Set("Content-Type", "application/json")
 
 	// Получение параметра даты из реквеста
 	date := r.URL.Query().Get("date")
 
-	// Получение и запись статистики
-	resp := GetCommits(id, date)
-
 	// Форматирование структуры в json и отправка пользователю
-	jsonResp, err := json.Marshal(resp)
+	jsonResp, err := json.Marshal(GetCommits(id, date))
 	if err != nil {
 		log.Printf("json.Marshal error: %s", err)
 	} else {
+		w.WriteHeader(http.StatusOK)
 		w.Write(jsonResp)
 	}
 }
