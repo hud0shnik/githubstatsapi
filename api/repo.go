@@ -29,7 +29,7 @@ func GetRepoInfo(username string, reponame string) RepoInfo {
 	resp, err := http.Get("https://github.com/" + username + "/" + reponame)
 	if err != nil {
 		return RepoInfo{
-			Error: "http get error",
+			Error: "Cant reach github.com",
 		}
 	}
 

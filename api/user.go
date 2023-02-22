@@ -69,7 +69,7 @@ func GetUserInfo(username string) UserInfo {
 	resp, err := http.Get("https://github.com/" + username)
 	if err != nil {
 		return UserInfo{
-			Error: "http get error",
+			Error: "Cant reach github.com",
 		}
 	}
 
@@ -95,7 +95,7 @@ func GetUserInfo(username string) UserInfo {
 	// Проверка на скрытие коммитов
 	if strings.Contains(pageStr, "'s activity is private</h4>") {
 		return UserInfo{
-			Error: "user's activity is private",
+			Error: username + "'s activity is private",
 		}
 	}
 

@@ -32,7 +32,7 @@ func GetCommits(username string, date string) UserCommits {
 	resp, err := http.Get("https://github.com/" + username + "?tab=overview&from=" + date)
 	if err != nil {
 		return UserCommits{
-			Error: "http get error",
+			Error: "Cant reach github.com",
 		}
 	}
 
