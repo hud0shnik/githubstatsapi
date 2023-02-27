@@ -1,0 +1,59 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #0D1117;
+    color: #ffffff;
+}
+.card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    margin: 10% 0;
+    min-height: 200px;
+    border-color: #30363D;
+    border-radius: var(--primer-borderRadius-medium, 6px);
+    border-style: solid;
+    border-top-style: solid;
+    border-right-style: solid;
+    border-bottom-style: solid;
+    border-left-style: solid;
+    border-width: var(--primer-borderWidth-thin, 1px);
+}
+.card a {
+    margin: 8px;
+    width: 600px;
+    color: #ffffff;
+    font-size: 160%;
+    line-height: 1.75;
+    border-radius: var(--primer-borderRadius-medium, 6px);
+    background-color: #0D1117;
+    text-decoration: none;
+    padding: 5px 10px;
+}
+.card a:hover {
+    background-color: #30363d;;
+    border-color: #8b949e;
+}
+.header {
+    text-decoration: none;
+    color: #ffffff;
+}
+.header h1{
+    width: 100%;
+    height: 100%;
+    margin: -10px;
+    background-color: #161B22;
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 10px;
+}
+.header h1:hover{
+    color: #B1B3B5;
+}
+.card .message {
+    margin: 8px;
+    width: 600px;
+    font-size: 170%;
+}
