@@ -32,7 +32,8 @@ body {
     padding: 5px 10px;
 }
 .card a:hover {
-    background-color: #30363d;;
+    background-color: #30363d;
+   ;
     border-color: #8b949e;
 }
 .header {
@@ -56,4 +57,7 @@ body {
     margin: 8px;
     width: 600px;
     font-size: 170%;
+}
+.card img{
+    height: 150px;
 }
