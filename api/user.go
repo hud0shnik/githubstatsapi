@@ -146,7 +146,7 @@ func User(w http.ResponseWriter, r *http.Request) {
 
 	// Если параметра нет, отправка ошибки
 	if id == "" {
-		http.NotFound(w, r)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
