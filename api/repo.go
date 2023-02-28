@@ -86,21 +86,13 @@ func GetRepoInfo(username string, reponame string) RepoInfo {
 // Роут "/repo"
 func Repo(w http.ResponseWriter, r *http.Request) {
 
-	// Получение параметра имени пользователя из реквеста
+	// Получение параметра имени пользователя и названия репозитория из реквеста
 	username := r.URL.Query().Get("username")
-
-	// Если параметра нет, отправка ошибки
-	if username == "" {
-		http.NotFound(w, r)
-		return
-	}
-
-	// Получение параметра названия репозитория из реквеста
 	reponame := r.URL.Query().Get("reponame")
 
 	// Если параметра нет, отправка ошибки
-	if reponame == "" {
-		http.NotFound(w, r)
+	if username == "" || reponame == "" {
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
