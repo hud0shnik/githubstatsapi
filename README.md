@@ -22,7 +22,7 @@ Field                       |       Type         | Description
 ----------------------------|--------------------|------------
 success                     |        bool        |
 error                       |       string       | api error response (default value= "")
-date                        |       string       |
+date                        |       string       | date (like 2022-01-21)
 username                    |       string       |
 commits                     |        int         |
 color                       |        int         |
@@ -58,14 +58,14 @@ packages                    |       string       |
 stars                       |       string       |
 contributions               |       string       |
 status                      |       string       |
-avatar                      |       string       |
+avatar                      |       string       | avatar url
 
 
 <h2>/repo/</h2>
 <h3>Request</h3>
 
 ``` Elixir
-https://githubstatsapi.vercel.app/api/repo?username=hud0shnik&reponame=OsuStatsApi
+https://githubstatsapi.vercel.app/api/repo
 ```
 
 Parameter       | Value type | Description   
