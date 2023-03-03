@@ -14,18 +14,20 @@ Parameter       | Value type | Description
 id              |   string   | username
 date            |   string   | date (like 2022-01-21)
 
-<h3>Response sample</h3>
+<h3>Structures</h3>
 
-``` Json
-{
-"success":  true,
-"error":    "",
-"date":     "2022-01-21",
-"username": "hud0shnik",
-"commits":  9,
-"color":    4
-}
-```
+<h4>UserCommits</h4>
+
+Field                       |       Type         | Description
+----------------------------|--------------------|------------
+success                     |        bool        |
+error                       |       string       | api error response (default value= "")
+date                        |       string       |
+username                    |       string       |
+commits                     |        int         |
+color                       |        int         |
+
+
 > ***color*** is color of the cell. There are 5 colors in total: from ***gray (0)*** to ***bright green (4)***
 
 <h2>/user/</h2>
@@ -39,24 +41,25 @@ Parameter       | Value type | Description
 ----------------|------------|-------------------------------------
 id              |   string   | username
 
-<h3>Response sample</h3>
+<h3>Structures</h3>
 
-``` Json
-{
-"success":       true,
-"error":         "",
-"username":      "hud0shnik",
-"name":          "Danila Egorov",
-"followers":     "59",
-"following":     "0",
-"repositories":  "25",
-"packages":      "0",
-"stars":         "4",
-"contributions": "1,980",
-"status":        "Drawin'",
-"avatar":        "https://avatars.githubusercontent.com/u/42404892"
-}
-```
+<h4>UserInfo</h4>
+
+Field                       |       Type         | Description
+----------------------------|--------------------|------------
+success                     |        bool        |
+error                       |       string       | api error response (default value= "")
+username                    |       string       |
+name                        |       string       |
+followers                   |       string       |
+following                   |       string       |
+repositories                |       string       |
+packages                    |       string       |
+stars                       |       string       |
+contributions               |       string       |
+status                      |       string       |
+avatar                      |       string       |
+
 
 <h2>/repo/</h2>
 <h3>Request</h3>
@@ -70,22 +73,22 @@ Parameter       | Value type | Description
 username        |   string   | username
 reponame        |   string   | reponame
 
-<h3>Response sample</h3>
+<h3>Structures</h3>
 
-``` Json
-{
-"success":  true,
-"error":    "",
-"username": "hud0shnik",
-"reponame": "OsuStatsApi",
-"commits":  "411",
-"branches": "2",
-"tags":     "0",
-"stars":    "2",
-"watching": "1",
-"forks":    "1"
-}
-```
+<h4>RepoInfo</h4>
+
+Field                       |       Type         | Description
+----------------------------|--------------------|------------
+success                     |        bool        |
+error                       |       string       | api error response (default value= "")
+username                    |       string       |
+reponame                    |       string       |
+commits                     |       string       |
+branches                    |       string       |
+tags                        |       string       |
+stars                       |       string       |
+watching                    |       string       |
+forks                       |       string       |
 
 
 <img src="https://wakatime.com/badge/user/ee2709af-fc5f-498b-aaa1-3ea47bf12a00/project/a706f6cd-74fe-4b0f-ab24-a030f4bb3191.svg?style=for-the-badge">
