@@ -2,14 +2,32 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
 // Структура для хранения полной информации о пользователе
 type UserInfo struct {
+	Success       bool   `json:"success"`
+	Error         string `json:"error"`
+	Username      string `json:"username"`
+	Name          string `json:"name"`
+	Followers     int    `json:"followers"`
+	Following     int    `json:"following"`
+	Repositories  int    `json:"repositories"`
+	Packages      int    `json:"packages"`
+	Stars         int    `json:"stars"`
+	Contributions int    `json:"contributions"`
+	Status        string `json:"status"`
+	Avatar        string `json:"avatar"`
+}
+
+// Структура для парсинга полной информации о пользователе
+type UserInfoString struct {
 	Success       bool   `json:"success"`
 	Error         string `json:"error"`
 	Username      string `json:"username"`
@@ -62,13 +80,37 @@ func find(str, subStr, stopChar string) string {
 	return ""
 }
 
-// Функция получения информации о пользователе
-func GetUserInfo(username string) UserInfo {
+// Функция перевода строки в число
+func toInt(s string) int {
+	i, err := strconv.Atoi(s)
+
+	if err != nil {
+		fmt.Println("parsing error: \t", s)
+		return 0
+	}
+
+	return i
+}
+
+// Функция перевода строки в bool
+func toBool(s string) bool {
+	f, err := strconv.ParseBool(s)
+
+	if err != nil {
+		fmt.Println("parsing error: \t", s)
+		return false
+	}
+
+	return f
+}
+
+// Функция получения информации о пользователе в формате строк
+func GetUserInfoString(username string) UserInfoString {
 
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username)
 	if err != nil {
-		return UserInfo{
+		return UserInfoString{
 			Error: "Cant reach github.com",
 		}
 	}
@@ -87,20 +129,20 @@ func GetUserInfo(username string) UserInfo {
 
 	// Проверка на страницу пользователя
 	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") {
-		return UserInfo{
+		return UserInfoString{
 			Error: "user not found",
 		}
 	}
 
 	// Проверка на скрытие коммитов
 	if strings.Contains(pageStr, "'s activity is private</h4>") {
-		return UserInfo{
+		return UserInfoString{
 			Error: username + "'s activity is private",
 		}
 	}
 
 	// Структура, которую будет возвращать функция
-	result := UserInfo{
+	result := UserInfoString{
 		Success:  true,
 		Username: username,
 	}
@@ -138,6 +180,36 @@ func GetUserInfo(username string) UserInfo {
 	return result
 }
 
+// Функция получения информации о пользователе в формате строк
+func GetUserInfo(username string) UserInfo {
+
+	// Получение текстовой версии статистики
+	resultStr := GetUserInfoString(username)
+
+	// Проверка на ошибки при парсинге
+	if !resultStr.Success {
+		return UserInfo{
+			Success: false,
+			Error:   resultStr.Error,
+		}
+	}
+
+	return UserInfo{
+		Success:       resultStr.Success,
+		Error:         resultStr.Error,
+		Username:      username,
+		Name:          resultStr.Name,
+		Followers:     toInt(resultStr.Followers),
+		Following:     toInt(resultStr.Following),
+		Repositories:  toInt(resultStr.Repositories),
+		Packages:      toInt(resultStr.Packages),
+		Stars:         toInt(resultStr.Stars),
+		Contributions: toInt(resultStr.Contributions),
+		Status:        resultStr.Status,
+		Avatar:        resultStr.Avatar,
+	}
+}
+
 // Роут "/user"
 func User(w http.ResponseWriter, r *http.Request) {
 
@@ -153,12 +225,23 @@ func User(w http.ResponseWriter, r *http.Request) {
 	// Передача в заголовок респонса типа данных
 	w.Header().Set("Content-Type", "application/json")
 
-	// Форматирование структуры в json и отправка пользователю
-	jsonResp, err := json.Marshal(GetUserInfo(id))
-	if err != nil {
-		log.Printf("json.Marshal error: %s", err)
+	// Проверка на тип, получение статистики, форматирование и отправка
+	if r.URL.Query().Get("type") == "string" {
+		jsonResp, err := json.Marshal(GetUserInfoString(id))
+		if err != nil {
+			log.Printf("json.Marshal error: %s", err)
+		} else {
+			w.WriteHeader(http.StatusOK)
+			w.Write(jsonResp)
+		}
 	} else {
-		w.WriteHeader(http.StatusOK)
-		w.Write(jsonResp)
+		jsonResp, err := json.Marshal(GetUserInfo(id))
+		if err != nil {
+			log.Printf("json.Marshal error: %s", err)
+		} else {
+			w.WriteHeader(http.StatusOK)
+			w.Write(jsonResp)
+		}
 	}
+
 }

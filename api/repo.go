@@ -14,6 +14,20 @@ type RepoInfo struct {
 	Error    string `json:"error"`
 	Username string `json:"username"`
 	Reponame string `json:"reponame"`
+	Commits  int    `json:"commits"`
+	Branches int    `json:"branches"`
+	Tags     int    `json:"tags"`
+	Stars    int    `json:"stars"`
+	Watching int    `json:"watching"`
+	Forks    int    `json:"forks"`
+}
+
+// Структура для парсинга информации о репозитории
+type RepoInfoString struct {
+	Success  bool   `json:"success"`
+	Error    string `json:"error"`
+	Username string `json:"username"`
+	Reponame string `json:"reponame"`
 	Commits  string `json:"commits"`
 	Branches string `json:"branches"`
 	Tags     string `json:"tags"`
@@ -22,13 +36,13 @@ type RepoInfo struct {
 	Forks    string `json:"forks"`
 }
 
-// Функция получения информации о репозитории
-func GetRepoInfo(username string, reponame string) RepoInfo {
+// Функция получения информации о репозитории в формате строк
+func GetRepoInfoString(username, reponame string) RepoInfoString {
 
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username + "/" + reponame)
 	if err != nil {
-		return RepoInfo{
+		return RepoInfoString{
 			Error: "Cant reach github.com",
 		}
 	}
@@ -47,13 +61,13 @@ func GetRepoInfo(username string, reponame string) RepoInfo {
 
 	// Проверка на репозиторий
 	if !strings.Contains(pageStr, "name=\"selected-link\" value=\"repo_source\"") {
-		return RepoInfo{
+		return RepoInfoString{
 			Error: "repo doesn't exist",
 		}
 	}
 
 	// Структура, которую будет возвращать функция
-	result := RepoInfo{
+	result := RepoInfoString{
 		Success:  true,
 		Username: username,
 		Reponame: reponame,
@@ -83,6 +97,34 @@ func GetRepoInfo(username string, reponame string) RepoInfo {
 	return result
 }
 
+// Функция получения информации о репозитории
+func GetRepoInfo(username, reponame string) RepoInfo {
+
+	// Получение текстовой версии статистики
+	resultStr := GetRepoInfoString(username, reponame)
+
+	// Проверка на ошибки при парсинге
+	if !resultStr.Success {
+		return RepoInfo{
+			Success: false,
+			Error:   resultStr.Error,
+		}
+	}
+
+	return RepoInfo{
+		Success:  resultStr.Success,
+		Error:    resultStr.Error,
+		Username: resultStr.Username,
+		Reponame: resultStr.Reponame,
+		Commits:  toInt(resultStr.Commits),
+		Branches: toInt(resultStr.Branches),
+		Tags:     toInt(resultStr.Tags),
+		Stars:    toInt(resultStr.Stars),
+		Watching: toInt(resultStr.Watching),
+		Forks:    toInt(resultStr.Forks),
+	}
+}
+
 // Роут "/repo"
 func Repo(w http.ResponseWriter, r *http.Request) {
 
@@ -99,12 +141,23 @@ func Repo(w http.ResponseWriter, r *http.Request) {
 	// Передача в заголовок респонса типа данных
 	w.Header().Set("Content-Type", "application/json")
 
-	// Форматирование структуры в json и отправка пользователю
-	jsonResp, err := json.Marshal(GetRepoInfo(username, reponame))
-	if err != nil {
-		log.Printf("json.Marshal error: %s", err)
+	// Проверка на тип, получение статистики, форматирование и отправка
+	if r.URL.Query().Get("type") == "string" {
+		jsonResp, err := json.Marshal(GetRepoInfoString(username, reponame))
+		if err != nil {
+			log.Printf("json.Marshal error: %s", err)
+		} else {
+			w.WriteHeader(http.StatusOK)
+			w.Write(jsonResp)
+		}
 	} else {
-		w.WriteHeader(http.StatusOK)
-		w.Write(jsonResp)
+		jsonResp, err := json.Marshal(GetRepoInfo(username, reponame))
+		if err != nil {
+			log.Printf("json.Marshal error: %s", err)
+		} else {
+			w.WriteHeader(http.StatusOK)
+			w.Write(jsonResp)
+		}
 	}
+
 }
