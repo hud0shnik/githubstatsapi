@@ -213,22 +213,27 @@ func GetUserInfo(username string) UserInfo {
 // Роут "/user"
 func User(w http.ResponseWriter, r *http.Request) {
 
+	// Передача в заголовок респонса типа данных
+	w.Header().Set("Content-Type", "application/json")
+
 	// Получение параметра id из реквеста
 	id := r.URL.Query().Get("id")
 
 	// Если параметра нет, отправка ошибки
 	if id == "" {
 		w.WriteHeader(http.StatusBadRequest)
+		json, _ := json.Marshal(map[string]string{"Error": "Please insert user id"})
+		w.Write(json)
 		return
 	}
-
-	// Передача в заголовок респонса типа данных
-	w.Header().Set("Content-Type", "application/json")
 
 	// Проверка на тип, получение статистики, форматирование и отправка
 	if r.URL.Query().Get("type") == "string" {
 		jsonResp, err := json.Marshal(GetUserInfoString(id))
 		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json, _ := json.Marshal(map[string]string{"Error": "Internal Server Error"})
+			w.Write(json)
 			log.Printf("json.Marshal error: %s", err)
 		} else {
 			w.WriteHeader(http.StatusOK)
@@ -237,6 +242,9 @@ func User(w http.ResponseWriter, r *http.Request) {
 	} else {
 		jsonResp, err := json.Marshal(GetUserInfo(id))
 		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json, _ := json.Marshal(map[string]string{"Error": "Internal Server Error"})
+			w.Write(json)
 			log.Printf("json.Marshal error: %s", err)
 		} else {
 			w.WriteHeader(http.StatusOK)

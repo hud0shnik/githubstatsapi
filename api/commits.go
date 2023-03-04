@@ -73,24 +73,26 @@ func GetCommits(username string, date string) UserCommits {
 // Роут "/commits"
 func Commits(w http.ResponseWriter, r *http.Request) {
 
+	// Передача в заголовок респонса типа данных
+	w.Header().Set("Content-Type", "application/json")
+
 	// Получение параметра id из реквеста
 	id := r.URL.Query().Get("id")
 
 	// Если параметра нет, отправка ошибки
 	if id == "" {
 		w.WriteHeader(http.StatusBadRequest)
+		json, _ := json.Marshal(map[string]string{"Error": "Please insert user id"})
+		w.Write(json)
 		return
 	}
 
-	// Передача в заголовок респонса типа данных
-	w.Header().Set("Content-Type", "application/json")
-
-	// Получение параметра даты из реквеста
-	date := r.URL.Query().Get("date")
-
 	// Форматирование структуры в json и отправка пользователю
-	jsonResp, err := json.Marshal(GetCommits(id, date))
+	jsonResp, err := json.Marshal(GetCommits(id, r.URL.Query().Get("date")))
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json, _ := json.Marshal(map[string]string{"Error": "Internal Server Error"})
+		w.Write(json)
 		log.Printf("json.Marshal error: %s", err)
 	} else {
 		w.WriteHeader(http.StatusOK)

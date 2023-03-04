@@ -128,6 +128,9 @@ func GetRepoInfo(username, reponame string) RepoInfo {
 // Роут "/repo"
 func Repo(w http.ResponseWriter, r *http.Request) {
 
+	// Передача в заголовок респонса типа данных
+	w.Header().Set("Content-Type", "application/json")
+
 	// Получение параметра имени пользователя и названия репозитория из реквеста
 	username := r.URL.Query().Get("username")
 	reponame := r.URL.Query().Get("reponame")
@@ -135,16 +138,18 @@ func Repo(w http.ResponseWriter, r *http.Request) {
 	// Если параметра нет, отправка ошибки
 	if username == "" || reponame == "" {
 		w.WriteHeader(http.StatusBadRequest)
+		json, _ := json.Marshal(map[string]string{"Error": "Please insert username and reponame"})
+		w.Write(json)
 		return
 	}
-
-	// Передача в заголовок респонса типа данных
-	w.Header().Set("Content-Type", "application/json")
 
 	// Проверка на тип, получение статистики, форматирование и отправка
 	if r.URL.Query().Get("type") == "string" {
 		jsonResp, err := json.Marshal(GetRepoInfoString(username, reponame))
 		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json, _ := json.Marshal(map[string]string{"Error": "Internal Server Error"})
+			w.Write(json)
 			log.Printf("json.Marshal error: %s", err)
 		} else {
 			w.WriteHeader(http.StatusOK)
@@ -153,6 +158,9 @@ func Repo(w http.ResponseWriter, r *http.Request) {
 	} else {
 		jsonResp, err := json.Marshal(GetRepoInfo(username, reponame))
 		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json, _ := json.Marshal(map[string]string{"Error": "Internal Server Error"})
+			w.Write(json)
 			log.Printf("json.Marshal error: %s", err)
 		} else {
 			w.WriteHeader(http.StatusOK)
