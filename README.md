@@ -9,10 +9,10 @@
 https://githubstatsapi.vercel.app/api/commits
 ```
 
-Parameter       | Value type | Description   
-----------------|------------|-------------------------------------
-id              |   string   | username
-date            |   string   | date (like 2022-01-21)
+Parameter       | Value type | Required | Description   
+----------------|------------|----------|------------
+id              |   string   |    Yes   | username
+date            |   string   |    No    | date (like 2022-01-21)
 
 <h3>Structures</h3>
 
@@ -37,9 +37,10 @@ color                       |        int         |
 https://githubstatsapi.vercel.app/api/user
 ```
 
-Parameter       | Value type | Description   
-----------------|------------|-------------------------------------
-id              |   string   | username
+Parameter       | Value type | Required | Description   
+----------------|------------|----------|------------
+id              |   string   |    Yes   | username
+type            |   string   |    No    | response type (like "string")
 
 <h3>Structures</h3>
 
@@ -68,10 +69,11 @@ avatar                      |       string       | avatar url
 https://githubstatsapi.vercel.app/api/repo
 ```
 
-Parameter       | Value type | Description   
-----------------|------------|-------------------------------------
-username        |   string   | username
-reponame        |   string   | reponame
+Parameter       | Value type | Required | Description   
+----------------|------------|----------|-------------
+username        |   string   |    Yes   | username
+reponame        |   string   |    Yes   | reponame
+type            |   string   |    No    | response type (like "string")
 
 <h3>Structures</h3>
 
