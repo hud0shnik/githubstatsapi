@@ -2,8 +2,16 @@
 
 <i><b>GithubStatsAPI</i></b> provides fast access to GitHub user statistics and commits
 
-<h2>/commits/</h2>
-<h3>Request</h3>
+## Overview
+
+- [Overview](#overview)
+- [Commits](#commits)
+- [User](#user)
+- [Repo](#repo)
+
+## Commits
+
+### Request
 
 ``` Elixir
 https://githubstatsapi.vercel.app/api/commits
@@ -14,9 +22,9 @@ Parameter       | Value type | Required | Description
 id              |   string   |    Yes   | username
 date            |   string   |    No    | date (like 2022-01-21)
 
-<h3>Structures</h3>
+### Structures
 
-<h4>UserCommits</h4>
+#### UserCommits
 
 Field                       |       Type         | Description
 ----------------------------|--------------------|------------
@@ -30,8 +38,9 @@ color                       |        int         |
 
 > ***color*** is color of the cell. There are 5 colors in total: from ***gray (0)*** to ***bright green (4)***
 
-<h2>/user/</h2>
-<h3>Request</h3>
+## User
+
+### Request
 
 ``` Elixir
 https://githubstatsapi.vercel.app/api/user
@@ -42,9 +51,9 @@ Parameter       | Value type | Required | Description
 id              |   string   |    Yes   | username
 type            |   string   |    No    | response type (like "string")
 
-<h3>Structures</h3>
+### Structures
 
-<h4>UserInfo</h4>
+#### UserInfo
 
 Field                       |       Type         | Description
 ----------------------------|--------------------|------------
@@ -62,8 +71,9 @@ status                      |       string       |
 avatar                      |       string       | avatar url
 
 
-<h2>/repo/</h2>
-<h3>Request</h3>
+## Repo
+
+### Request
 
 ``` Elixir
 https://githubstatsapi.vercel.app/api/repo
@@ -75,9 +85,9 @@ username        |   string   |    Yes   | username
 reponame        |   string   |    Yes   | reponame
 type            |   string   |    No    | response type (like "string")
 
-<h3>Structures</h3>
+### Structures
 
-<h4>RepoInfo</h4>
+#### RepoInfo
 
 Field                       |       Type         | Description
 ----------------------------|--------------------|------------
