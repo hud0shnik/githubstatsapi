@@ -26,7 +26,7 @@ body {
     color: #ffffff;
     font-size: 160%;
     line-height: 1.75;
-    border-radius: var(--primer-borderRadius-medium, 6px);
+    border-radius: 6px;
     background-color: #0D1117;
     text-decoration: none;
     padding: 5px 10px;
