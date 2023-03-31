@@ -225,7 +225,7 @@ func User(w http.ResponseWriter, r *http.Request) {
 	// Получение параметра id из реквеста
 	id := r.URL.Query().Get("id")
 
-	// Если параметра нет, отправка ошибки
+	// Проверка на наличие параметра
 	if id == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		json, _ := json.Marshal(ApiError{Error: "please insert user id"})
@@ -233,10 +233,14 @@ func User(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Проверка на тип, получение статистики, форматирование и отправка
+	// Проверка на тип
 	if r.URL.Query().Get("type") == "string" {
+
+		// Получение статистики и перевод в json
 		result := GetUserInfoString(id)
 		jsonResp, err := json.Marshal(result)
+
+		// Обработчик ошибок
 		switch {
 		case err != nil:
 			w.WriteHeader(http.StatusInternalServerError)
@@ -256,8 +260,12 @@ func User(w http.ResponseWriter, r *http.Request) {
 			w.Write(jsonResp)
 		}
 	} else {
+
+		// Получение статистики и перевод в json
 		result := GetUserInfo(id)
 		jsonResp, err := json.Marshal(result)
+
+		// Обработчик ошибок
 		switch {
 		case err != nil:
 			w.WriteHeader(http.StatusInternalServerError)
