@@ -79,7 +79,7 @@ func Commits(w http.ResponseWriter, r *http.Request) {
 	// Получение параметра id из реквеста
 	id := r.URL.Query().Get("id")
 
-	// Если параметра нет, отправка ошибки
+	// Проверка на наличие параметра
 	if id == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		json, _ := json.Marshal(ApiError{Error: "please insert user id"})
@@ -87,9 +87,11 @@ func Commits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Форматирование структуры в json и отправка пользователю
+	// Получение статистики и перевод в json
 	result := GetCommits(id, r.URL.Query().Get("date"))
 	jsonResp, err := json.Marshal(result)
+
+	// Обработчик ошибок
 	switch {
 	case err != nil:
 		w.WriteHeader(http.StatusInternalServerError)
