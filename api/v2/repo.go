@@ -131,11 +131,11 @@ func Repo(w http.ResponseWriter, r *http.Request) {
 	// Передача в заголовок респонса типа данных
 	w.Header().Set("Content-Type", "application/json")
 
-	// Получение параметра имени пользователя и названия репозитория из реквеста
+	// Получение имени пользователя и названия репозитория из реквеста
 	username := r.URL.Query().Get("username")
 	reponame := r.URL.Query().Get("reponame")
 
-	// Если параметра нет, отправка ошибки
+	// Проверка на наличие параметров
 	if username == "" || reponame == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		json, _ := json.Marshal(ApiError{Error: "please insert username and reponame"})
@@ -143,10 +143,14 @@ func Repo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Проверка на тип, получение статистики, форматирование и отправка
+	// Проверка на тип
 	if r.URL.Query().Get("type") == "string" {
+
+		// Получение статистики и перевод в json
 		result := GetRepoInfoString(username, reponame)
 		jsonResp, err := json.Marshal(result)
+
+		// Обработчик ошибок
 		switch {
 		case err != nil:
 			w.WriteHeader(http.StatusInternalServerError)
@@ -166,8 +170,12 @@ func Repo(w http.ResponseWriter, r *http.Request) {
 			w.Write(jsonResp)
 		}
 	} else {
+
+		// Получение статистики и перевод в json
 		result := GetRepoInfo(username, reponame)
 		jsonResp, err := json.Marshal(result)
+
+		// Обработчик ошибок
 		switch {
 		case err != nil:
 			w.WriteHeader(http.StatusInternalServerError)
