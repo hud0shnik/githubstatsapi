@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	api "gitAPI/api"
+	api2 "gitAPI/api/v2"
 	"log"
 	"net/http"
 	"os"
@@ -23,10 +24,13 @@ func main() {
 	// Маршруты
 
 	router.HandleFunc("/api/commits", api.Commits).Methods("GET")
+	router.HandleFunc("/api/v2/commits", api2.Commits).Methods("GET")
 
 	router.HandleFunc("/api/user", api.User).Methods("GET")
+	router.HandleFunc("/api/v2/user", api2.User).Methods("GET")
 
 	router.HandleFunc("/api/repo", api.Repo).Methods("GET")
+	router.HandleFunc("/api/v2/repo", api2.Repo).Methods("GET")
 
 	// Запуск API
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
