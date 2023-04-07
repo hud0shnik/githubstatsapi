@@ -76,23 +76,23 @@ func GetRepoInfoString(username, reponame string) RepoInfoString {
 	// Индекс конца последней найденной строки
 	left := 0
 
+	// Звезды
+	result.Stars, left = findWithIndex(pageStr, "2.694Z\"></path>\n</svg>\n          <span class=\"text-bold\">", "<", left)
+
+	// Форки
+	result.Forks, left = findWithIndex(pageStr, "0Z\"></path>\n</svg>\n          <span class=\"text-bold\">", "<", left)
+
 	// Ветки
-	result.Branches, left = findWithIndex(pageStr, "01-1.5 0z\"></path>\n</svg>\n          <strong>", "<", left)
+	result.Branches, left = findWithIndex(pageStr, "0-1.5Z\"></path>\n</svg>\n          <strong>", "<", left)
 
 	// Теги
-	result.Tags, left = findWithIndex(pageStr, "000-2z\"></path>\n</svg>\n        <strong>", "<", left)
+	result.Tags, left = findWithIndex(pageStr, "0-2Z\"></path>\n</svg>\n        <strong>", "<", left)
 
 	// Коммиты
 	result.Commits, left = findWithIndex(pageStr, "class=\"d-none d-sm-inline\">\n                    <strong>", "<", left)
 
-	// Звезды
-	result.Stars, left = findWithIndex(pageStr, "94v.001z\"></path>\n</svg>\n    <strong>", "<", left)
-
 	// Просмотры
-	result.Watching, left = findWithIndex(pageStr, " 000 4z\"></path>\n</svg>\n    <strong>", "<", left)
-
-	// Форки
-	result.Forks, _ = findWithIndex(pageStr, "5.75.75 0 000 1.5z\"></path>\n</svg>\n    <strong>", "<", left)
+	result.Watching, _ = findWithIndex(pageStr, "10Z\"></path>\n</svg>\n    <strong>", "<", left)
 
 	return result
 }
