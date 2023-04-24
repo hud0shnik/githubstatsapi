@@ -2,6 +2,7 @@ package handler2
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -37,14 +38,13 @@ type repoInfoString struct {
 }
 
 // Функция получения информации о репозитории в формате строк
-func getRepoInfoString(username, reponame string) repoInfoString {
+func getRepoInfoString(username, reponame string) (repoInfoString, error) {
 
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username + "/" + reponame)
 	if err != nil {
-		return repoInfoString{
-			Error: "can't reach github.com",
-		}
+		return repoInfoString{}, fmt.Errorf("in http.Get: %w", err)
+
 	}
 
 	// Запись респонса
@@ -61,9 +61,7 @@ func getRepoInfoString(username, reponame string) repoInfoString {
 
 	// Проверка на репозиторий
 	if !strings.Contains(pageStr, "name=\"selected-link\" value=\"repo_source\"") {
-		return repoInfoString{
-			Error: "not found",
-		}
+		return repoInfoString{}, fmt.Errorf("not found")
 	}
 
 	// Структура, которую будет возвращать функция
@@ -94,21 +92,16 @@ func getRepoInfoString(username, reponame string) repoInfoString {
 	// Просмотры
 	result.Watching, _ = findWithIndex(pageStr, "10Z\"></path>\n</svg>\n    <strong>", "<", left)
 
-	return result
+	return result, nil
 }
 
 // Функция получения информации о репозитории
-func getRepoInfo(username, reponame string) repoInfo {
+func getRepoInfo(username, reponame string) (repoInfo, error) {
 
 	// Получение текстовой версии статистики
-	resultStr := getRepoInfoString(username, reponame)
-
-	// Проверка на ошибки при парсинге
-	if !resultStr.Success {
-		return repoInfo{
-			Success: false,
-			Error:   resultStr.Error,
-		}
+	resultStr, err := getRepoInfoString(username, reponame)
+	if err != nil {
+		return repoInfo{}, err
 	}
 
 	return repoInfo{
@@ -122,7 +115,8 @@ func getRepoInfo(username, reponame string) repoInfo {
 		Stars:    toInt(resultStr.Stars),
 		Watching: toInt(resultStr.Watching),
 		Forks:    toInt(resultStr.Forks),
-	}
+	}, nil
+
 }
 
 // Роут "/repo"
@@ -146,54 +140,60 @@ func Repo(w http.ResponseWriter, r *http.Request) {
 	// Проверка на тип
 	if r.URL.Query().Get("type") == "string" {
 
-		// Получение статистики и перевод в json
-		result := getRepoInfoString(username, reponame)
-		jsonResp, err := json.Marshal(result)
+		// Получение статистики
+		result, err := getRepoInfoString(username, reponame)
+		if err != nil {
+			if err.Error() == "not found" {
+				w.WriteHeader(http.StatusNotFound)
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+			json, _ := json.Marshal(apiError{Error: err.Error()})
+			w.Write(json)
+			return
+		}
 
-		// Обработчик ошибок
-		switch {
-		case err != nil:
+		// Перевод в json
+		jsonResp, err := json.Marshal(result)
+		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			json, _ := json.Marshal(apiError{Error: "internal server error"})
 			w.Write(json)
 			log.Printf("json.Marshal error: %s", err)
-		case result.Error == "not found":
-			w.WriteHeader(http.StatusNotFound)
-			json, _ := json.Marshal(apiError{Error: "not found"})
-			w.Write(json)
-		case !result.Success:
-			w.WriteHeader(http.StatusInternalServerError)
-			json, _ := json.Marshal(apiError{Error: result.Error})
-			w.Write(json)
-		default:
-			w.WriteHeader(http.StatusOK)
-			w.Write(jsonResp)
+			return
 		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResp)
+
 	} else {
 
 		// Получение статистики и перевод в json
-		result := getRepoInfo(username, reponame)
-		jsonResp, err := json.Marshal(result)
+		result, err := getRepoInfo(username, reponame)
+		if err != nil {
+			if err.Error() == "not found" {
+				w.WriteHeader(http.StatusNotFound)
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+			json, _ := json.Marshal(apiError{Error: err.Error()})
+			w.Write(json)
+			return
+		}
 
-		// Обработчик ошибок
-		switch {
-		case err != nil:
+		// Перевод в json
+		jsonResp, err := json.Marshal(result)
+		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			json, _ := json.Marshal(apiError{Error: "internal server error"})
 			w.Write(json)
 			log.Printf("json.Marshal error: %s", err)
-		case result.Error == "not found":
-			w.WriteHeader(http.StatusNotFound)
-			json, _ := json.Marshal(apiError{Error: "not found"})
-			w.Write(json)
-		case !result.Success:
-			w.WriteHeader(http.StatusInternalServerError)
-			json, _ := json.Marshal(apiError{Error: result.Error})
-			w.Write(json)
-		default:
-			w.WriteHeader(http.StatusOK)
-			w.Write(jsonResp)
+			return
 		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResp)
+
 	}
 
 }
