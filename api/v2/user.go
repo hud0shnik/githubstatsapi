@@ -111,14 +111,12 @@ func toBool(s string) bool {
 }
 
 // Функция получения информации о пользователе в формате строк
-func getUserInfoString(username string) userInfoString {
+func getUserInfoString(username string) (userInfoString, error) {
 
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username)
 	if err != nil {
-		return userInfoString{
-			Error: "cant reach github.com",
-		}
+		return userInfoString{}, fmt.Errorf("in http.Get: %w", err)
 	}
 
 	// Запись респонса
@@ -135,16 +133,12 @@ func getUserInfoString(username string) userInfoString {
 
 	// Проверка на страницу пользователя
 	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") {
-		return userInfoString{
-			Error: "not found",
-		}
+		return userInfoString{}, fmt.Errorf("not found")
 	}
 
 	// Проверка на скрытие коммитов
 	if strings.Contains(pageStr, "'s activity is private</h4>") {
-		return userInfoString{
-			Error: "activity is private",
-		}
+		return userInfoString{}, fmt.Errorf("activity is private")
 	}
 
 	// Структура, которую будет возвращать функция
@@ -183,23 +177,19 @@ func getUserInfoString(username string) userInfoString {
 	// Контрибуции за год
 	result.Contributions, _ = findWithIndex(pageStr, "<h2 class=\"f4 text-normal mb-2\">\n      ", "\n", left)
 
-	return result
+	return result, nil
 }
 
 // Функция получения информации о пользователе в формате строк
-func getUserInfo(username string) userInfo {
+func getUserInfo(username string) (userInfo, error) {
 
 	// Получение текстовой версии статистики
-	resultStr := getUserInfoString(username)
-
-	// Проверка на ошибки при парсинге
-	if !resultStr.Success {
-		return userInfo{
-			Success: false,
-			Error:   resultStr.Error,
-		}
+	resultStr, err := getUserInfoString(username)
+	if err != nil {
+		return userInfo{}, err
 	}
 
+	// Форматирование
 	return userInfo{
 		Success:       resultStr.Success,
 		Error:         resultStr.Error,
@@ -213,7 +203,8 @@ func getUserInfo(username string) userInfo {
 		Contributions: toInt(resultStr.Contributions),
 		Status:        resultStr.Status,
 		Avatar:        resultStr.Avatar,
-	}
+	}, nil
+
 }
 
 // Роут "/user"
@@ -236,55 +227,60 @@ func User(w http.ResponseWriter, r *http.Request) {
 	// Проверка на тип
 	if r.URL.Query().Get("type") == "string" {
 
-		// Получение статистики и перевод в json
-		result := getUserInfoString(id)
-		jsonResp, err := json.Marshal(result)
+		// Получение статистики
+		result, err := getUserInfoString(id)
+		if err != nil {
+			if err.Error() == "not found" {
+				w.WriteHeader(http.StatusNotFound)
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+			json, _ := json.Marshal(apiError{Error: err.Error()})
+			w.Write(json)
+			return
+		}
 
-		// Обработчик ошибок
-		switch {
-		case err != nil:
+		// Перевод в json
+		jsonResp, err := json.Marshal(result)
+		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			json, _ := json.Marshal(apiError{Error: "internal server error"})
 			w.Write(json)
 			log.Printf("json.Marshal error: %s", err)
-		case result.Error == "not found":
-			w.WriteHeader(http.StatusNotFound)
-			json, _ := json.Marshal(apiError{Error: "not found"})
-			w.Write(json)
-		case !result.Success:
-			w.WriteHeader(http.StatusInternalServerError)
-			json, _ := json.Marshal(apiError{Error: result.Error})
-			w.Write(json)
-		default:
-			w.WriteHeader(http.StatusOK)
-			w.Write(jsonResp)
+			return
 		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResp)
 
 	} else {
 
-		// Получение статистики и перевод в json
-		result := getUserInfo(id)
-		jsonResp, err := json.Marshal(result)
+		// Получение статистики
+		result, err := getUserInfo(id)
+		if err != nil {
+			if err.Error() == "not found" {
+				w.WriteHeader(http.StatusNotFound)
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+			json, _ := json.Marshal(apiError{Error: err.Error()})
+			w.Write(json)
+			return
+		}
 
-		// Обработчик ошибок
-		switch {
-		case err != nil:
+		// Перевод в json
+		jsonResp, err := json.Marshal(result)
+		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			json, _ := json.Marshal(apiError{Error: "internal server error"})
 			w.Write(json)
 			log.Printf("json.Marshal error: %s", err)
-		case result.Error == "not found":
-			w.WriteHeader(http.StatusNotFound)
-			json, _ := json.Marshal(apiError{Error: "not found"})
-			w.Write(json)
-		case !result.Success:
-			w.WriteHeader(http.StatusInternalServerError)
-			json, _ := json.Marshal(apiError{Error: result.Error})
-			w.Write(json)
-		default:
-			w.WriteHeader(http.StatusOK)
-			w.Write(jsonResp)
+			return
 		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonResp)
+
 	}
 
 }
