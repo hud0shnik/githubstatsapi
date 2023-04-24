@@ -2,6 +2,7 @@ package handler2
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -21,7 +22,7 @@ type userCommits struct {
 }
 
 // Функция получения коммитов
-func getCommits(username string, date string) userCommits {
+func getCommits(username string, date string) (userCommits, error) {
 
 	// Если поле даты пустое, функция поставит сегодняшнее число
 	if date == "" {
@@ -31,13 +32,11 @@ func getCommits(username string, date string) userCommits {
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username + "?tab=overview&from=" + date)
 	if err != nil {
-		return userCommits{
-			Error: "can't reach github.com",
-		}
+		return userCommits{}, fmt.Errorf("in http.Get: %w", err)
 	}
+	defer resp.Body.Close()
 
 	// Запись респонса
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	// HTML полученной страницы в формате string
@@ -57,17 +56,18 @@ func getCommits(username string, date string) userCommits {
 	// Индекс ячейки с нужной датой
 	i := strings.Index(pageStr, "data-date=\""+date)
 
-	// Поиск и запись информации
-	if i != -1 {
-		result.Success = true
-		pageStr = pageStr[i-22:]
-		result.Color, _ = strconv.Atoi(find(pageStr, "data-level=\"", "\""))
-		result.Commits, _ = strconv.Atoi(find(pageStr, "\">", " "))
-	} else {
-		result.Error = "not found"
+	// Проверка на наличие ячейки
+	if i == -1 {
+		return userCommits{}, fmt.Errorf("not found")
 	}
 
-	return result
+	// Запись данных
+	result.Success = true
+	pageStr = pageStr[i-22:]
+	result.Color, _ = strconv.Atoi(find(pageStr, "data-level=\"", "\""))
+	result.Commits, _ = strconv.Atoi(find(pageStr, "\">", " "))
+
+	return result, nil
 }
 
 // Роут "/commits"
@@ -87,27 +87,30 @@ func Commits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Получение статистики и перевод в json
-	result := getCommits(id, r.URL.Query().Get("date"))
-	jsonResp, err := json.Marshal(result)
+	// Получение статистики
+	result, err := getCommits(id, r.URL.Query().Get("date"))
+	if err != nil {
+		if err.Error() == "not found" {
+			w.WriteHeader(http.StatusNotFound)
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+		json, _ := json.Marshal(apiError{Error: err.Error()})
+		w.Write(json)
+		return
+	}
 
-	// Обработчик ошибок
-	switch {
-	case err != nil:
+	// Перевод в json
+	jsonResp, err := json.Marshal(result)
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json, _ := json.Marshal(apiError{Error: "internal server error"})
 		w.Write(json)
 		log.Printf("json.Marshal error: %s", err)
-	case result.Error == "not found":
-		w.WriteHeader(http.StatusNotFound)
-		json, _ := json.Marshal(apiError{Error: "not found"})
-		w.Write(json)
-	case !result.Success:
-		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(apiError{Error: result.Error})
-		w.Write(json)
-	default:
-		w.WriteHeader(http.StatusOK)
-		w.Write(jsonResp)
+		return
 	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonResp)
+
 }
