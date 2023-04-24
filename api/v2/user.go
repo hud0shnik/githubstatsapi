@@ -88,10 +88,9 @@ func find(str, subStr, stopChar string) string {
 
 // Функция перевода строки в число
 func toInt(s string) int {
-	i, err := strconv.Atoi(s)
 
+	i, err := strconv.Atoi(s)
 	if err != nil {
-		fmt.Println("parsing error: \t", s)
 		return 0
 	}
 
@@ -100,10 +99,9 @@ func toInt(s string) int {
 
 // Функция перевода строки в bool
 func toBool(s string) bool {
-	f, err := strconv.ParseBool(s)
 
+	f, err := strconv.ParseBool(s)
 	if err != nil {
-		fmt.Println("parsing error: \t", s)
 		return false
 	}
 
