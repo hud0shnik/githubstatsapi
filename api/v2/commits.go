@@ -11,7 +11,7 @@ import (
 )
 
 // Структура для хранения информации о коммитах
-type UserCommits struct {
+type userCommits struct {
 	Success  bool   `json:"success"`
 	Error    string `json:"error"`
 	Date     string `json:"date"`
@@ -21,7 +21,7 @@ type UserCommits struct {
 }
 
 // Функция получения коммитов
-func GetCommits(username string, date string) UserCommits {
+func getCommits(username string, date string) userCommits {
 
 	// Если поле даты пустое, функция поставит сегодняшнее число
 	if date == "" {
@@ -31,7 +31,7 @@ func GetCommits(username string, date string) UserCommits {
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username + "?tab=overview&from=" + date)
 	if err != nil {
-		return UserCommits{
+		return userCommits{
 			Error: "can't reach github.com",
 		}
 	}
@@ -49,7 +49,7 @@ func GetCommits(username string, date string) UserCommits {
 	}*/
 
 	// Структура, которую будет возвращать функция
-	result := UserCommits{
+	result := userCommits{
 		Date:     date,
 		Username: username,
 	}
@@ -82,29 +82,29 @@ func Commits(w http.ResponseWriter, r *http.Request) {
 	// Проверка на наличие параметра
 	if id == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		json, _ := json.Marshal(ApiError{Error: "please insert user id"})
+		json, _ := json.Marshal(apiError{Error: "please insert user id"})
 		w.Write(json)
 		return
 	}
 
 	// Получение статистики и перевод в json
-	result := GetCommits(id, r.URL.Query().Get("date"))
+	result := getCommits(id, r.URL.Query().Get("date"))
 	jsonResp, err := json.Marshal(result)
 
 	// Обработчик ошибок
 	switch {
 	case err != nil:
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(ApiError{Error: "internal server error"})
+		json, _ := json.Marshal(apiError{Error: "internal server error"})
 		w.Write(json)
 		log.Printf("json.Marshal error: %s", err)
 	case result.Error == "not found":
 		w.WriteHeader(http.StatusNotFound)
-		json, _ := json.Marshal(ApiError{Error: "not found"})
+		json, _ := json.Marshal(apiError{Error: "not found"})
 		w.Write(json)
 	case !result.Success:
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(ApiError{Error: result.Error})
+		json, _ := json.Marshal(apiError{Error: result.Error})
 		w.Write(json)
 	default:
 		w.WriteHeader(http.StatusOK)
