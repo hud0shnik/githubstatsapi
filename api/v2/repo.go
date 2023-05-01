@@ -11,8 +11,6 @@ import (
 
 // Структура для хранения информации о репозитории
 type repoInfo struct {
-	Success  bool   `json:"success"`
-	Error    string `json:"error"`
 	Username string `json:"username"`
 	Reponame string `json:"reponame"`
 	Commits  int    `json:"commits"`
@@ -25,8 +23,6 @@ type repoInfo struct {
 
 // Структура для парсинга информации о репозитории
 type repoInfoString struct {
-	Success  bool   `json:"success"`
-	Error    string `json:"error"`
 	Username string `json:"username"`
 	Reponame string `json:"reponame"`
 	Commits  string `json:"commits"`
@@ -66,7 +62,6 @@ func getRepoInfoString(username, reponame string) (repoInfoString, error) {
 
 	// Структура, которую будет возвращать функция
 	result := repoInfoString{
-		Success:  true,
 		Username: username,
 		Reponame: reponame,
 	}
@@ -106,8 +101,6 @@ func getRepoInfo(username, reponame string) (repoInfo, error) {
 	}
 
 	return repoInfo{
-		Success:  resultStr.Success,
-		Error:    resultStr.Error,
 		Username: resultStr.Username,
 		Reponame: resultStr.Reponame,
 		Commits:  toInt(resultStr.Commits),
