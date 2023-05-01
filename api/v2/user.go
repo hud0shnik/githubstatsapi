@@ -12,8 +12,6 @@ import (
 
 // Структура для хранения полной информации о пользователе
 type userInfo struct {
-	Success       bool   `json:"success"`
-	Error         string `json:"error"`
 	Username      string `json:"username"`
 	Name          string `json:"name"`
 	Followers     int    `json:"followers"`
@@ -28,8 +26,6 @@ type userInfo struct {
 
 // Структура для парсинга полной информации о пользователе
 type userInfoString struct {
-	Success       bool   `json:"success"`
-	Error         string `json:"error"`
 	Username      string `json:"username"`
 	Name          string `json:"name"`
 	Followers     string `json:"followers"`
@@ -103,12 +99,12 @@ func toInt(s string) int {
 // Функция перевода строки в bool
 func toBool(s string) bool {
 
-	f, err := strconv.ParseBool(s)
+	b, err := strconv.ParseBool(s)
 	if err != nil {
 		return false
 	}
 
-	return f
+	return b
 
 }
 
@@ -145,7 +141,6 @@ func getUserInfoString(username string) (userInfoString, error) {
 
 	// Структура, которую будет возвращать функция
 	result := userInfoString{
-		Success:  true,
 		Username: username,
 	}
 
@@ -194,8 +189,6 @@ func getUserInfo(username string) (userInfo, error) {
 
 	// Форматирование
 	return userInfo{
-		Success:       resultStr.Success,
-		Error:         resultStr.Error,
 		Username:      username,
 		Name:          resultStr.Name,
 		Followers:     toInt(resultStr.Followers),
