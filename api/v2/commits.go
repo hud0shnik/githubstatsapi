@@ -13,8 +13,6 @@ import (
 
 // Структура для хранения информации о коммитах
 type userCommits struct {
-	Success  bool   `json:"success"`
-	Error    string `json:"error"`
 	Date     string `json:"date"`
 	Username string `json:"username"`
 	Commits  int    `json:"commits"`
@@ -62,7 +60,6 @@ func getCommits(username string, date string) (userCommits, error) {
 	}
 
 	// Запись данных
-	result.Success = true
 	pageStr = pageStr[i-22:]
 	result.Color, _ = strconv.Atoi(find(pageStr, "data-level=\"", "\""))
 	result.Commits, _ = strconv.Atoi(find(pageStr, "\">", " "))
