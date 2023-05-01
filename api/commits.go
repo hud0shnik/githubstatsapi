@@ -1,4 +1,4 @@
-package handler
+package api
 
 import (
 	"encoding/json"
@@ -68,6 +68,7 @@ func GetCommits(username string, date string) UserCommits {
 	}
 
 	return result
+
 }
 
 // Роут "/commits"
@@ -98,4 +99,5 @@ func Commits(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write(jsonResp)
 	}
+
 }

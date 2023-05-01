@@ -1,4 +1,4 @@
-package handler
+package api
 
 import (
 	"encoding/json"
@@ -95,6 +95,7 @@ func GetRepoInfoString(username, reponame string) RepoInfoString {
 	result.Forks, _ = findWithIndex(pageStr, "5.75.75 0 000 1.5z\"></path>\n</svg>\n    <strong>", "<", left)
 
 	return result
+
 }
 
 // Функция получения информации о репозитории
@@ -123,6 +124,7 @@ func GetRepoInfo(username, reponame string) RepoInfo {
 		Watching: toInt(resultStr.Watching),
 		Forks:    toInt(resultStr.Forks),
 	}
+
 }
 
 // Роут "/repo"

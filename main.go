@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	api "gitAPI/api"
+	"gitAPI/api"
 	api2 "gitAPI/api/v2"
 	"log"
 	"net/http"
