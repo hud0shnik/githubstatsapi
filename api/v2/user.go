@@ -1,4 +1,4 @@
-package handler2
+package api2
 
 import (
 	"encoding/json"
@@ -68,6 +68,7 @@ func findWithIndex(str, subStr, stopChar string, start int) (string, int) {
 	}
 
 	return "", 0
+
 }
 
 // Облегчённая функция поиска. Возвращает только искомое значение
@@ -84,6 +85,7 @@ func find(str, subStr, stopChar string) string {
 	}
 
 	return ""
+
 }
 
 // Функция перевода строки в число
@@ -95,6 +97,7 @@ func toInt(s string) int {
 	}
 
 	return i
+
 }
 
 // Функция перевода строки в bool
@@ -106,6 +109,7 @@ func toBool(s string) bool {
 	}
 
 	return f
+
 }
 
 // Функция получения информации о пользователе в формате строк
@@ -176,6 +180,7 @@ func getUserInfoString(username string) (userInfoString, error) {
 	result.Contributions, _ = findWithIndex(pageStr, "<h2 class=\"f4 text-normal mb-2\">\n      ", "\n", left)
 
 	return result, nil
+
 }
 
 // Функция получения информации о пользователе в формате строк

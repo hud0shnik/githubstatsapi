@@ -1,4 +1,4 @@
-package handler2
+package api2
 
 import (
 	"encoding/json"
@@ -68,6 +68,7 @@ func getCommits(username string, date string) (userCommits, error) {
 	result.Commits, _ = strconv.Atoi(find(pageStr, "\">", " "))
 
 	return result, nil
+
 }
 
 // Роут "/commits"

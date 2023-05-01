@@ -1,4 +1,4 @@
-package handler2
+package api2
 
 import (
 	"encoding/json"
@@ -93,6 +93,7 @@ func getRepoInfoString(username, reponame string) (repoInfoString, error) {
 	result.Watching, _ = findWithIndex(pageStr, "10Z\"></path>\n</svg>\n    <strong>", "<", left)
 
 	return result, nil
+
 }
 
 // Функция получения информации о репозитории
