@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"gitAPI/api"
-	api2 "gitAPI/api/v2"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/hud0shnik/githubStatsAPI/api"
+	api2 "github.com/hud0shnik/githubStatsAPI/api/v2"
 
 	"github.com/gorilla/mux"
 )
