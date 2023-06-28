@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -21,8 +20,8 @@ func main() {
 	})
 
 	// Вывод времени начала работы
-	fmt.Println("API Start: " + string(time.Now().Format("2006-01-02 15:04:05")))
-	fmt.Println("Port:\t" + os.Getenv("PORT"))
+	logrus.Info("API Start")
+	logrus.Info("Port: " + os.Getenv("PORT"))
 
 	// Роутер
 	router := mux.NewRouter()
