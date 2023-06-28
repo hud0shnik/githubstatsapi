@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Структура для хранения информации о коммитах
@@ -42,7 +43,7 @@ func getCommits(username string, date string) (userCommits, error) {
 
 	// Запись html в файл для тестирования
 	/*if err := os.WriteFile("sample.html", []byte(pageStr), 0666); err != nil {
-		log.Fatal(err)
+		logrus..Fatal(err)
 	}*/
 
 	// Структура, которую будет возвращать функция
@@ -104,7 +105,7 @@ func Commits(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		json, _ := json.Marshal(apiError{Error: "internal server error"})
 		w.Write(json)
-		log.Printf("json.Marshal error: %s", err)
+		logrus.Printf("json.Marshal error: %s", err)
 		return
 	}
 

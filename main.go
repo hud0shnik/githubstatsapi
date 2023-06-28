@@ -2,18 +2,23 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/hud0shnik/githubStatsAPI/api"
 	api2 "github.com/hud0shnik/githubStatsAPI/api/v2"
+	"github.com/sirupsen/logrus"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
+
+	// Настройка логгера
+	logrus.SetFormatter(&logrus.JSONFormatter{
+		TimestampFormat: time.DateTime,
+	})
 
 	// Вывод времени начала работы
 	fmt.Println("API Start: " + string(time.Now().Format("2006-01-02 15:04:05")))
@@ -34,6 +39,6 @@ func main() {
 	router.HandleFunc("/api/v2/repo", api2.Repo).Methods("GET")
 
 	// Запуск API
-	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
+	logrus.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
 
 }

@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Структура для хранения информации о репозитории
@@ -52,7 +53,7 @@ func getRepoInfoString(username, reponame string) (repoInfoString, error) {
 
 	// Запись html в файл для тестирования
 	/*if err := os.WriteFile("sampleRepo.html", []byte(pageStr), 0666); err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}*/
 
 	// Проверка на репозиторий
@@ -153,7 +154,7 @@ func Repo(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			json, _ := json.Marshal(apiError{Error: "internal server error"})
 			w.Write(json)
-			log.Printf("json.Marshal error: %s", err)
+			logrus.Printf("json.Marshal error: %s", err)
 			return
 		}
 
@@ -181,7 +182,7 @@ func Repo(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			json, _ := json.Marshal(apiError{Error: "internal server error"})
 			w.Write(json)
-			log.Printf("json.Marshal error: %s", err)
+			logrus.Printf("json.Marshal error: %s", err)
 			return
 		}
 

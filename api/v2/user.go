@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Структура для хранения полной информации о пользователе
@@ -126,7 +127,7 @@ func getUserInfoString(username string) (userInfoString, error) {
 
 	// Запись html в файл для тестирования
 	/*if err := os.WriteFile("sample.html", []byte(pageStr), 0666); err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}*/
 
 	// Проверка на страницу пользователя
@@ -242,7 +243,7 @@ func User(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			json, _ := json.Marshal(apiError{Error: "internal server error"})
 			w.Write(json)
-			log.Printf("json.Marshal error: %s", err)
+			logrus.Printf("json.Marshal error: %s", err)
 			return
 		}
 
@@ -270,7 +271,7 @@ func User(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			json, _ := json.Marshal(apiError{Error: "internal server error"})
 			w.Write(json)
-			log.Printf("json.Marshal error: %s", err)
+			logrus.Printf("json.Marshal error: %s", err)
 			return
 		}
 
