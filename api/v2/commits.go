@@ -21,7 +21,7 @@ type userCommits struct {
 }
 
 // Функция получения коммитов
-func getCommits(username string, date string) (userCommits, error) {
+func getCommits(username string, date string) (userCommits, int, error) {
 
 	// Если поле даты пустое, функция поставит сегодняшнее число
 	if date == "" {
@@ -31,9 +31,16 @@ func getCommits(username string, date string) (userCommits, error) {
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username + "?tab=overview&from=" + date)
 	if err != nil {
-		return userCommits{}, fmt.Errorf("in http.Get: %w", err)
+		return userCommits{}, http.StatusInternalServerError,
+			fmt.Errorf("in http.Get: %w", err)
 	}
 	defer resp.Body.Close()
+
+	// Проверка статускода
+	if resp.StatusCode != 200 {
+		return userCommits{}, resp.StatusCode,
+			fmt.Errorf(resp.Status)
+	}
 
 	// Запись респонса
 	body, _ := ioutil.ReadAll(resp.Body)
@@ -57,7 +64,8 @@ func getCommits(username string, date string) (userCommits, error) {
 
 	// Проверка на наличие ячейки
 	if i == -1 {
-		return userCommits{}, fmt.Errorf("not found")
+		return userCommits{}, http.StatusNotFound,
+			fmt.Errorf("not found")
 	}
 
 	// Запись данных
@@ -65,7 +73,7 @@ func getCommits(username string, date string) (userCommits, error) {
 	result.Color, _ = strconv.Atoi(find(pageStr, "data-level=\"", "\""))
 	result.Commits, _ = strconv.Atoi(find(pageStr, "\">", " "))
 
-	return result, nil
+	return result, http.StatusOK, nil
 
 }
 
@@ -87,13 +95,9 @@ func Commits(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Получение статистики
-	result, err := getCommits(id, r.URL.Query().Get("date"))
+	result, statusCode, err := getCommits(id, r.URL.Query().Get("date"))
 	if err != nil {
-		if err.Error() == "not found" {
-			w.WriteHeader(http.StatusNotFound)
-		} else {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
+		w.WriteHeader(statusCode)
 		json, _ := json.Marshal(apiError{Error: err.Error()})
 		w.Write(json)
 		return
