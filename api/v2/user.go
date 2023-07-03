@@ -110,16 +110,22 @@ func toBool(s string) bool {
 }
 
 // Функция получения информации о пользователе в формате строк
-func getUserInfoString(username string) (userInfoString, error) {
+func getUserInfoString(username string) (userInfoString, int, error) {
 
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username)
 	if err != nil {
-		return userInfoString{}, fmt.Errorf("in http.Get: %w", err)
+		return userInfoString{}, http.StatusInternalServerError, fmt.Errorf("in http.Get: %w", err)
+	}
+	defer resp.Body.Close()
+
+	// Проверка статускода
+	if resp.StatusCode != 200 {
+		return userInfoString{}, resp.StatusCode,
+			fmt.Errorf(resp.Status)
 	}
 
 	// Запись респонса
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	// HTML полученной страницы в формате string
@@ -132,12 +138,12 @@ func getUserInfoString(username string) (userInfoString, error) {
 
 	// Проверка на страницу пользователя
 	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") {
-		return userInfoString{}, fmt.Errorf("not found")
+		return userInfoString{}, http.StatusNotFound, fmt.Errorf("not found")
 	}
 
 	// Проверка на скрытие коммитов
 	if strings.Contains(pageStr, "'s activity is private</h4>") {
-		return userInfoString{}, fmt.Errorf("activity is private")
+		return userInfoString{}, http.StatusForbidden, fmt.Errorf("activity is private")
 	}
 
 	// Структура, которую будет возвращать функция
@@ -175,17 +181,17 @@ func getUserInfoString(username string) (userInfoString, error) {
 	// Контрибуции за год
 	result.Contributions, _ = findWithIndex(pageStr, "<h2 class=\"f4 text-normal mb-2\">\n      ", "\n", left)
 
-	return result, nil
+	return result, http.StatusOK, nil
 
 }
 
 // Функция получения информации о пользователе в формате строк
-func getUserInfo(username string) (userInfo, error) {
+func getUserInfo(username string) (userInfo, int, error) {
 
 	// Получение текстовой версии статистики
-	resultStr, err := getUserInfoString(username)
+	resultStr, statusCode, err := getUserInfoString(username)
 	if err != nil {
-		return userInfo{}, err
+		return userInfo{}, statusCode, err
 	}
 
 	// Форматирование
@@ -200,7 +206,7 @@ func getUserInfo(username string) (userInfo, error) {
 		Contributions: toInt(resultStr.Contributions),
 		Status:        resultStr.Status,
 		Avatar:        resultStr.Avatar,
-	}, nil
+	}, http.StatusOK, nil
 
 }
 
@@ -225,13 +231,9 @@ func User(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Query().Get("type") == "string" {
 
 		// Получение статистики
-		result, err := getUserInfoString(id)
+		result, statusCode, err := getUserInfoString(id)
 		if err != nil {
-			if err.Error() == "not found" {
-				w.WriteHeader(http.StatusNotFound)
-			} else {
-				w.WriteHeader(http.StatusInternalServerError)
-			}
+			w.WriteHeader(statusCode)
 			json, _ := json.Marshal(apiError{Error: err.Error()})
 			w.Write(json)
 			return
@@ -253,13 +255,9 @@ func User(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		// Получение статистики
-		result, err := getUserInfo(id)
+		result, statusCode, err := getUserInfo(id)
 		if err != nil {
-			if err.Error() == "not found" {
-				w.WriteHeader(http.StatusNotFound)
-			} else {
-				w.WriteHeader(http.StatusInternalServerError)
-			}
+			w.WriteHeader(statusCode)
 			json, _ := json.Marshal(apiError{Error: err.Error()})
 			w.Write(json)
 			return
