@@ -35,17 +35,22 @@ type repoInfoString struct {
 }
 
 // Функция получения информации о репозитории в формате строк
-func getRepoInfoString(username, reponame string) (repoInfoString, error) {
+func getRepoInfoString(username, reponame string) (repoInfoString, int, error) {
 
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username + "/" + reponame)
 	if err != nil {
-		return repoInfoString{}, fmt.Errorf("in http.Get: %w", err)
+		return repoInfoString{}, http.StatusInternalServerError, fmt.Errorf("in http.Get: %w", err)
+	}
+	defer resp.Body.Close()
 
+	// Проверка статускода
+	if resp.StatusCode != 200 {
+		return repoInfoString{}, resp.StatusCode,
+			fmt.Errorf(resp.Status)
 	}
 
 	// Запись респонса
-	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 
 	// HTML полученной страницы в формате string
@@ -58,7 +63,7 @@ func getRepoInfoString(username, reponame string) (repoInfoString, error) {
 
 	// Проверка на репозиторий
 	if !strings.Contains(pageStr, "name=\"selected-link\" value=\"repo_source\"") {
-		return repoInfoString{}, fmt.Errorf("not found")
+		return repoInfoString{}, http.StatusNotFound, fmt.Errorf("not found")
 	}
 
 	// Структура, которую будет возвращать функция
@@ -88,17 +93,17 @@ func getRepoInfoString(username, reponame string) (repoInfoString, error) {
 	// Просмотры
 	result.Watching, _ = findWithIndex(pageStr, "10Z\"></path>\n</svg>\n    <strong>", "<", left)
 
-	return result, nil
+	return result, http.StatusOK, nil
 
 }
 
 // Функция получения информации о репозитории
-func getRepoInfo(username, reponame string) (repoInfo, error) {
+func getRepoInfo(username, reponame string) (repoInfo, int, error) {
 
 	// Получение текстовой версии статистики
-	resultStr, err := getRepoInfoString(username, reponame)
+	resultStr, statusCode, err := getRepoInfoString(username, reponame)
 	if err != nil {
-		return repoInfo{}, err
+		return repoInfo{}, statusCode, err
 	}
 
 	return repoInfo{
@@ -110,7 +115,7 @@ func getRepoInfo(username, reponame string) (repoInfo, error) {
 		Stars:    toInt(resultStr.Stars),
 		Watching: toInt(resultStr.Watching),
 		Forks:    toInt(resultStr.Forks),
-	}, nil
+	}, http.StatusOK, nil
 
 }
 
@@ -136,13 +141,9 @@ func Repo(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Query().Get("type") == "string" {
 
 		// Получение статистики
-		result, err := getRepoInfoString(username, reponame)
+		result, statusCode, err := getRepoInfoString(username, reponame)
 		if err != nil {
-			if err.Error() == "not found" {
-				w.WriteHeader(http.StatusNotFound)
-			} else {
-				w.WriteHeader(http.StatusInternalServerError)
-			}
+			w.WriteHeader(statusCode)
 			json, _ := json.Marshal(apiError{Error: err.Error()})
 			w.Write(json)
 			return
@@ -164,13 +165,9 @@ func Repo(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		// Получение статистики и перевод в json
-		result, err := getRepoInfo(username, reponame)
+		result, statusCode, err := getRepoInfo(username, reponame)
 		if err != nil {
-			if err.Error() == "not found" {
-				w.WriteHeader(http.StatusNotFound)
-			} else {
-				w.WriteHeader(http.StatusInternalServerError)
-			}
+			w.WriteHeader(statusCode)
 			json, _ := json.Marshal(apiError{Error: err.Error()})
 			w.Write(json)
 			return
