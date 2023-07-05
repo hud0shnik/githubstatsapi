@@ -5,8 +5,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
+
+	"github.com/hud0shnik/githubStatsAPI/utils"
 )
 
 // Структура для хранения полной информации о пользователе
@@ -39,70 +40,6 @@ type UserInfoString struct {
 	Contributions string `json:"contributions"`
 	Status        string `json:"status"`
 	Avatar        string `json:"avatar"`
-}
-
-// Функция поиска. Возвращает искомое значение и индекс последнего символа
-func findWithIndex(str, subStr, stopChar string, start int) (string, int) {
-
-	// Обрезка левой границы поиска
-	str = str[start:]
-
-	// Проверка на существование нужной строки
-	if strings.Contains(str, subStr) {
-
-		// Поиск индекса начала нужной строки
-		left := strings.Index(str, subStr) + len(subStr)
-
-		// Поиск правой границы
-		right := left + strings.Index(str[left:], stopChar)
-
-		// Обрезка и вывод результата
-		return str[left:right], right + start
-	}
-
-	return "", 0
-
-}
-
-// Облегчённая функция поиска. Возвращает только искомое значение
-func find(str, subStr, stopChar string) string {
-
-	// Проверка на существование нужной строки
-	if strings.Contains(str, subStr) {
-
-		// Обрезка левой части
-		str = str[strings.Index(str, subStr)+len(subStr):]
-
-		// Обрезка правой части и вывод результата
-		return str[:strings.Index(str, stopChar)]
-	}
-
-	return ""
-
-}
-
-// Функция перевода строки в число
-func toInt(s string) int {
-
-	i, err := strconv.Atoi(s)
-	if err != nil {
-		return 0
-	}
-
-	return i
-
-}
-
-// Функция перевода строки в bool
-func toBool(s string) bool {
-
-	b, err := strconv.ParseBool(s)
-	if err != nil {
-		return false
-	}
-
-	return b
-
 }
 
 // Функция получения информации о пользователе в формате строк
@@ -152,31 +89,31 @@ func GetUserInfoString(username string) UserInfoString {
 	left := 0
 
 	// Репозитории
-	result.Repositories, left = findWithIndex(pageStr, "Repositories\n    <span title=\"", "\"", left)
+	result.Repositories, left = utils.FindWithIndex(pageStr, "Repositories\n    <span title=\"", "\"", left)
 
 	// Пакеты
-	result.Packages, left = findWithIndex(pageStr, "Packages\n      <span title=\"", "\"", left)
+	result.Packages, left = utils.FindWithIndex(pageStr, "Packages\n      <span title=\"", "\"", left)
 
 	// Поставленные звезды
-	result.Stars, left = findWithIndex(pageStr, "Stars\n    <span title=\"", "\"", left)
+	result.Stars, left = utils.FindWithIndex(pageStr, "Stars\n    <span title=\"", "\"", left)
 
 	// Ссылка на аватар
-	result.Avatar, left = findWithIndex(pageStr, "<img style=\"height:auto;\" alt=\"Avatar\" src=\"", "\"", left)
+	result.Avatar, left = utils.FindWithIndex(pageStr, "<img style=\"height:auto;\" alt=\"Avatar\" src=\"", "\"", left)
 
 	// Статус
-	result.Status, left = findWithIndex(pageStr, "status-message-wrapper f6 color-fg-default no-wrap \" >\n        <div>", "</div>", left)
+	result.Status, left = utils.FindWithIndex(pageStr, "status-message-wrapper f6 color-fg-default no-wrap \" >\n        <div>", "</div>", left)
 
 	// Имя пользователя
-	result.Name, left = findWithIndex(pageStr, "\"name\">\n          ", "\n", left)
+	result.Name, left = utils.FindWithIndex(pageStr, "\"name\">\n          ", "\n", left)
 
 	// Подписчики
-	result.Followers, left = findWithIndex(pageStr, "<span class=\"text-bold color-fg-default\">", "<", left)
+	result.Followers, left = utils.FindWithIndex(pageStr, "<span class=\"text-bold color-fg-default\">", "<", left)
 
 	// Подписки
-	result.Following, left = findWithIndex(pageStr, "<span class=\"text-bold color-fg-default\">", "<", left)
+	result.Following, left = utils.FindWithIndex(pageStr, "<span class=\"text-bold color-fg-default\">", "<", left)
 
 	// Контрибуции за год
-	result.Contributions, _ = findWithIndex(pageStr, "<h2 class=\"f4 text-normal mb-2\">\n      ", "\n", left)
+	result.Contributions, _ = utils.FindWithIndex(pageStr, "<h2 class=\"f4 text-normal mb-2\">\n      ", "\n", left)
 
 	return result
 
@@ -201,12 +138,12 @@ func GetUserInfo(username string) UserInfo {
 		Error:         resultStr.Error,
 		Username:      username,
 		Name:          resultStr.Name,
-		Followers:     toInt(resultStr.Followers),
-		Following:     toInt(resultStr.Following),
-		Repositories:  toInt(resultStr.Repositories),
-		Packages:      toInt(resultStr.Packages),
-		Stars:         toInt(resultStr.Stars),
-		Contributions: toInt(resultStr.Contributions),
+		Followers:     utils.ToInt(resultStr.Followers),
+		Following:     utils.ToInt(resultStr.Following),
+		Repositories:  utils.ToInt(resultStr.Repositories),
+		Packages:      utils.ToInt(resultStr.Packages),
+		Stars:         utils.ToInt(resultStr.Stars),
+		Contributions: utils.ToInt(resultStr.Contributions),
 		Status:        resultStr.Status,
 		Avatar:        resultStr.Avatar,
 	}

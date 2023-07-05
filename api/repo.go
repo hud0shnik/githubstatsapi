@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/hud0shnik/githubStatsAPI/utils"
 )
 
 // Структура для хранения информации о репозитории
@@ -77,22 +79,22 @@ func GetRepoInfoString(username, reponame string) RepoInfoString {
 	left := 0
 
 	// Ветки
-	result.Branches, left = findWithIndex(pageStr, "01-1.5 0z\"></path>\n</svg>\n          <strong>", "<", left)
+	result.Branches, left = utils.FindWithIndex(pageStr, "01-1.5 0z\"></path>\n</svg>\n          <strong>", "<", left)
 
 	// Теги
-	result.Tags, left = findWithIndex(pageStr, "000-2z\"></path>\n</svg>\n        <strong>", "<", left)
+	result.Tags, left = utils.FindWithIndex(pageStr, "000-2z\"></path>\n</svg>\n        <strong>", "<", left)
 
 	// Коммиты
-	result.Commits, left = findWithIndex(pageStr, "class=\"d-none d-sm-inline\">\n                    <strong>", "<", left)
+	result.Commits, left = utils.FindWithIndex(pageStr, "class=\"d-none d-sm-inline\">\n                    <strong>", "<", left)
 
 	// Звезды
-	result.Stars, left = findWithIndex(pageStr, "94v.001z\"></path>\n</svg>\n    <strong>", "<", left)
+	result.Stars, left = utils.FindWithIndex(pageStr, "94v.001z\"></path>\n</svg>\n    <strong>", "<", left)
 
 	// Просмотры
-	result.Watching, left = findWithIndex(pageStr, " 000 4z\"></path>\n</svg>\n    <strong>", "<", left)
+	result.Watching, left = utils.FindWithIndex(pageStr, " 000 4z\"></path>\n</svg>\n    <strong>", "<", left)
 
 	// Форки
-	result.Forks, _ = findWithIndex(pageStr, "5.75.75 0 000 1.5z\"></path>\n</svg>\n    <strong>", "<", left)
+	result.Forks, _ = utils.FindWithIndex(pageStr, "5.75.75 0 000 1.5z\"></path>\n</svg>\n    <strong>", "<", left)
 
 	return result
 
@@ -117,12 +119,12 @@ func GetRepoInfo(username, reponame string) RepoInfo {
 		Error:    resultStr.Error,
 		Username: resultStr.Username,
 		Reponame: resultStr.Reponame,
-		Commits:  toInt(resultStr.Commits),
-		Branches: toInt(resultStr.Branches),
-		Tags:     toInt(resultStr.Tags),
-		Stars:    toInt(resultStr.Stars),
-		Watching: toInt(resultStr.Watching),
-		Forks:    toInt(resultStr.Forks),
+		Commits:  utils.ToInt(resultStr.Commits),
+		Branches: utils.ToInt(resultStr.Branches),
+		Tags:     utils.ToInt(resultStr.Tags),
+		Stars:    utils.ToInt(resultStr.Stars),
+		Watching: utils.ToInt(resultStr.Watching),
+		Forks:    utils.ToInt(resultStr.Forks),
 	}
 
 }

@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/hud0shnik/githubStatsAPI/utils"
 )
 
 // Структура для хранения информации о коммитах
@@ -61,8 +63,8 @@ func GetCommits(username string, date string) UserCommits {
 	if i != -1 {
 		result.Success = true
 		pageStr = pageStr[i-22:]
-		result.Color, _ = strconv.Atoi(find(pageStr, "data-level=\"", "\""))
-		result.Commits, _ = strconv.Atoi(find(pageStr, "\">", " "))
+		result.Color, _ = strconv.Atoi(utils.Find(pageStr, "data-level=\"", "\""))
+		result.Commits, _ = strconv.Atoi(utils.Find(pageStr, "\">", " "))
 	} else {
 		result.Error = "commits not found"
 	}
