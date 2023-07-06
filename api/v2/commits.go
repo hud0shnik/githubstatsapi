@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/hud0shnik/githubStatsAPI/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -70,8 +71,8 @@ func getCommits(username string, date string) (userCommits, int, error) {
 
 	// Запись данных
 	pageStr = pageStr[i-22:]
-	result.Color, _ = strconv.Atoi(find(pageStr, "data-level=\"", "\""))
-	result.Commits, _ = strconv.Atoi(find(pageStr, "\">", " "))
+	result.Color, _ = strconv.Atoi(utils.Find(pageStr, "data-level=\"", "\""))
+	result.Commits, _ = strconv.Atoi(utils.Find(pageStr, "\">", " "))
 
 	return result, http.StatusOK, nil
 
