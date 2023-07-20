@@ -70,9 +70,9 @@ func getCommits(username string, date string) (userCommits, int, error) {
 	}
 
 	// Запись данных
-	pageStr = pageStr[i-22:]
+	pageStr = pageStr[i:]
 	result.Color, _ = strconv.Atoi(utils.Find(pageStr, "data-level=\"", "\""))
-	result.Commits, _ = strconv.Atoi(utils.Find(pageStr, "\">", " "))
+	result.Commits, _ = strconv.Atoi(utils.Find(pageStr, "class=\"sr-only\">", " "))
 
 	return result, http.StatusOK, nil
 
