@@ -62,9 +62,9 @@ func GetCommits(username string, date string) UserCommits {
 	// Поиск и запись информации
 	if i != -1 {
 		result.Success = true
-		pageStr = pageStr[i-22:]
+		pageStr = pageStr[i:]
 		result.Color, _ = strconv.Atoi(utils.Find(pageStr, "data-level=\"", "\""))
-		result.Commits, _ = strconv.Atoi(utils.Find(pageStr, "\">", " "))
+		result.Commits, _ = strconv.Atoi(utils.Find(pageStr, "class=\"sr-only\">", " "))
 	} else {
 		result.Error = "commits not found"
 	}
