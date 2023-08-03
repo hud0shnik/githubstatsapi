@@ -1,4 +1,5 @@
-module github.com/hud0shnik/githubStatsAPI
+module github.com/hud0shnik/githubstatsapi
+
 
 go 1.20
 

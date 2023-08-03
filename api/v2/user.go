@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/hud0shnik/githubStatsAPI/utils"
+	"github.com/hud0shnik/githubstatsapi/utils"
 	"github.com/sirupsen/logrus"
 )
 

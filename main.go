@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/hud0shnik/githubStatsAPI/api"
-	api2 "github.com/hud0shnik/githubStatsAPI/api/v2"
+	"github.com/hud0shnik/githubstatsapi/api"
+	api2 "github.com/hud0shnik/githubstatsapi/api/v2"
 	"github.com/sirupsen/logrus"
 
 	"github.com/gorilla/mux"

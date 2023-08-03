@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hud0shnik/githubStatsAPI/utils"
+	"github.com/hud0shnik/githubstatsapi/utils"
 )
 
 // Структура для хранения информации о коммитах
