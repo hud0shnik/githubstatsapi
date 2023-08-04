@@ -3,7 +3,7 @@ package api2
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 	"strings"
@@ -44,7 +44,7 @@ func getCommits(username string, date string) (userCommits, int, error) {
 	}
 
 	// Запись респонса
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, _ := io.ReadAll(resp.Body)
 
 	// HTML полученной страницы в формате string
 	pageStr := string(body)[100000:]

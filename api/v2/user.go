@@ -3,7 +3,7 @@ package api2
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 
@@ -62,7 +62,7 @@ func getUserInfoString(username string) (userInfoString, int, error) {
 	}
 
 	// Запись респонса
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, _ := io.ReadAll(resp.Body)
 
 	// HTML полученной страницы в формате string
 	pageStr := string(body)[55000:]

@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"strings"
@@ -55,7 +55,7 @@ func GetUserInfoString(username string) UserInfoString {
 
 	// Запись респонса
 	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, _ := io.ReadAll(resp.Body)
 
 	// HTML полученной страницы в формате string
 	pageStr := string(body)[55000:]
