@@ -1,11 +1,10 @@
 module github.com/hud0shnik/githubstatsapi
 
-
 go 1.20
 
-require (
-	github.com/gorilla/mux v1.8.0
-	github.com/sirupsen/logrus v1.9.3
-)
+require github.com/sirupsen/logrus v1.9.3
 
-require golang.org/x/sys v0.10.0 // indirect
+require (
+	github.com/go-chi/chi v1.5.4
+	golang.org/x/sys v0.11.0 // indirect
+)

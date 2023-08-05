@@ -5,11 +5,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/go-chi/chi"
 	"github.com/hud0shnik/githubstatsapi/api"
 	api2 "github.com/hud0shnik/githubstatsapi/api/v2"
 	"github.com/sirupsen/logrus"
-
-	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -24,18 +23,17 @@ func main() {
 	logrus.Info("Port: " + os.Getenv("PORT"))
 
 	// Роутер
-	router := mux.NewRouter()
+	router := chi.NewRouter()
 
 	// Маршруты
 
-	router.HandleFunc("/api/commits", api.Commits).Methods("GET")
-	router.HandleFunc("/api/v2/commits", api2.Commits).Methods("GET")
+	router.Get("/api/user", api.User)
+	router.Get("/api/repo", api.Repo)
+	router.Get("/api/commits", api.Commits)
 
-	router.HandleFunc("/api/user", api.User).Methods("GET")
-	router.HandleFunc("/api/v2/user", api2.User).Methods("GET")
-
-	router.HandleFunc("/api/repo", api.Repo).Methods("GET")
-	router.HandleFunc("/api/v2/repo", api2.Repo).Methods("GET")
+	router.Get("/api/v2/user", api2.User)
+	router.Get("/api/v2/repo", api2.Repo)
+	router.Get("/api/v2/commits", api2.Commits)
 
 	// Запуск API
 	logrus.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
