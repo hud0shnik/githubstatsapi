@@ -26,11 +26,11 @@ func main() {
 	router := chi.NewRouter()
 
 	// Маршруты
-
 	router.Get("/api/user", api.User)
 	router.Get("/api/repo", api.Repo)
 	router.Get("/api/commits", api.Commits)
 
+	// Маршруты v2
 	router.Get("/api/v2/user", api2.User)
 	router.Get("/api/v2/repo", api2.Repo)
 	router.Get("/api/v2/commits", api2.Commits)
