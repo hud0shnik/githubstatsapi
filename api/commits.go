@@ -37,9 +37,9 @@ func GetCommits(username string, date string) UserCommits {
 			Error: "Cant reach github.com",
 		}
 	}
+	defer resp.Body.Close()
 
 	// Запись респонса
-	defer resp.Body.Close()
 	body, _ := io.ReadAll(resp.Body)
 
 	// HTML полученной страницы в формате string
