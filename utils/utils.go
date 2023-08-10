@@ -5,47 +5,47 @@ import (
 	"strings"
 )
 
-// Функция поиска. Возвращает искомое значение и индекс последнего символа
-func FindWithIndex(str, subStr, stopChar string, start int) (string, int) {
+// FindWithIndex производит поиск substr в s[start:] и возвращает строку от конца substr до stopChar
+func FindWithIndex(s, substr, stopChar string, start int) (string, int) {
 
 	// Обрезка левой границы поиска
-	str = str[start:]
+	s = s[start:]
 
 	// Проверка на существование нужной строки
-	if strings.Contains(str, subStr) {
+	if strings.Contains(s, substr) {
 
 		// Поиск индекса начала нужной строки
-		left := strings.Index(str, subStr) + len(subStr)
+		left := strings.Index(s, substr) + len(substr)
 
 		// Поиск правой границы
-		right := left + strings.Index(str[left:], stopChar)
+		right := left + strings.Index(s[left:], stopChar)
 
 		// Обрезка и вывод результата
-		return str[left:right], right + start
+		return s[left:right], right + start
 	}
 
 	return "", 0
 
 }
 
-// Облегчённая функция поиска. Возвращает только искомое значение
-func Find(str, subStr, stopChar string) string {
+// Find работает как FindWithIndex, но не возвращает индекс
+func Find(s, substr, stopChar string) string {
 
 	// Проверка на существование нужной строки
-	if strings.Contains(str, subStr) {
+	if strings.Contains(s, substr) {
 
 		// Обрезка левой части
-		str = str[strings.Index(str, subStr)+len(subStr):]
+		s = s[strings.Index(s, substr)+len(substr):]
 
 		// Обрезка правой части и вывод результата
-		return str[:strings.Index(str, stopChar)]
+		return s[:strings.Index(s, stopChar)]
 	}
 
 	return ""
 
 }
 
-// Функция перевода строки в число
+// ToInt переводит string в int
 func ToInt(s string) int {
 
 	i, err := strconv.Atoi(s)
@@ -57,14 +57,14 @@ func ToInt(s string) int {
 
 }
 
-// Функция перевода строки в bool
+// ToBool переводит string в bool
 func ToBool(s string) bool {
 
-	b, err := strconv.ParseBool(s)
+	f, err := strconv.ParseBool(s)
 	if err != nil {
 		return false
 	}
 
-	return b
+	return f
 
 }
