@@ -11,7 +11,7 @@ import (
 )
 
 // Структура для хранения полной информации о пользователе
-type UserInfo struct {
+type userInfo struct {
 	Success       bool   `json:"success"`
 	Error         string `json:"error"`
 	Username      string `json:"username"`
@@ -27,7 +27,7 @@ type UserInfo struct {
 }
 
 // Структура для парсинга полной информации о пользователе
-type UserInfoString struct {
+type userInfoString struct {
 	Success       bool   `json:"success"`
 	Error         string `json:"error"`
 	Username      string `json:"username"`
@@ -43,12 +43,12 @@ type UserInfoString struct {
 }
 
 // Функция получения информации о пользователе в формате строк
-func GetUserInfoString(username string) UserInfoString {
+func GetUserInfoString(username string) userInfoString {
 
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username)
 	if err != nil {
-		return UserInfoString{
+		return userInfoString{
 			Error: "Cant reach github.com",
 		}
 	}
@@ -67,20 +67,20 @@ func GetUserInfoString(username string) UserInfoString {
 
 	// Проверка на страницу пользователя
 	if !strings.Contains(pageStr, "p-nickname vcard-username d-block") {
-		return UserInfoString{
+		return userInfoString{
 			Error: "user not found",
 		}
 	}
 
 	// Проверка на скрытие коммитов
 	if strings.Contains(pageStr, "'s activity is private</h4>") {
-		return UserInfoString{
+		return userInfoString{
 			Error: username + "'s activity is private",
 		}
 	}
 
 	// Структура, которую будет возвращать функция
-	result := UserInfoString{
+	result := userInfoString{
 		Success:  true,
 		Username: username,
 	}
@@ -120,20 +120,20 @@ func GetUserInfoString(username string) UserInfoString {
 }
 
 // Функция получения информации о пользователе в формате строк
-func GetUserInfo(username string) UserInfo {
+func GetUserInfo(username string) userInfo {
 
 	// Получение текстовой версии статистики
 	resultStr := GetUserInfoString(username)
 
 	// Проверка на ошибки при парсинге
 	if !resultStr.Success {
-		return UserInfo{
+		return userInfo{
 			Success: false,
 			Error:   resultStr.Error,
 		}
 	}
 
-	return UserInfo{
+	return userInfo{
 		Success:       resultStr.Success,
 		Error:         resultStr.Error,
 		Username:      username,

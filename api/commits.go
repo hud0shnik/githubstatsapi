@@ -13,7 +13,7 @@ import (
 )
 
 // Структура для хранения информации о коммитах
-type UserCommits struct {
+type userCommits struct {
 	Success  bool   `json:"success"`
 	Error    string `json:"error"`
 	Date     string `json:"date"`
@@ -23,7 +23,7 @@ type UserCommits struct {
 }
 
 // Функция получения коммитов
-func GetCommits(username string, date string) UserCommits {
+func GetCommits(username string, date string) userCommits {
 
 	// Если поле даты пустое, функция поставит сегодняшнее число
 	if date == "" {
@@ -33,7 +33,7 @@ func GetCommits(username string, date string) UserCommits {
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username + "?tab=overview&from=" + date)
 	if err != nil {
-		return UserCommits{
+		return userCommits{
 			Error: "Cant reach github.com",
 		}
 	}
@@ -51,7 +51,7 @@ func GetCommits(username string, date string) UserCommits {
 	}*/
 
 	// Структура, которую будет возвращать функция
-	result := UserCommits{
+	result := userCommits{
 		Date:     date,
 		Username: username,
 	}

@@ -11,7 +11,7 @@ import (
 )
 
 // Структура для хранения информации о репозитории
-type RepoInfo struct {
+type repoInfo struct {
 	Success  bool   `json:"success"`
 	Error    string `json:"error"`
 	Username string `json:"username"`
@@ -25,7 +25,7 @@ type RepoInfo struct {
 }
 
 // Структура для парсинга информации о репозитории
-type RepoInfoString struct {
+type repoInfoString struct {
 	Success  bool   `json:"success"`
 	Error    string `json:"error"`
 	Username string `json:"username"`
@@ -39,12 +39,12 @@ type RepoInfoString struct {
 }
 
 // Функция получения информации о репозитории в формате строк
-func GetRepoInfoString(username, reponame string) RepoInfoString {
+func GetRepoInfoString(username, reponame string) repoInfoString {
 
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username + "/" + reponame)
 	if err != nil {
-		return RepoInfoString{
+		return repoInfoString{
 			Error: "Cant reach github.com",
 		}
 	}
@@ -63,13 +63,13 @@ func GetRepoInfoString(username, reponame string) RepoInfoString {
 
 	// Проверка на репозиторий
 	if !strings.Contains(pageStr, "name=\"selected-link\" value=\"repo_source\"") {
-		return RepoInfoString{
+		return repoInfoString{
 			Error: "repo doesn't exist",
 		}
 	}
 
 	// Структура, которую будет возвращать функция
-	result := RepoInfoString{
+	result := repoInfoString{
 		Success:  true,
 		Username: username,
 		Reponame: reponame,
@@ -101,20 +101,20 @@ func GetRepoInfoString(username, reponame string) RepoInfoString {
 }
 
 // Функция получения информации о репозитории
-func GetRepoInfo(username, reponame string) RepoInfo {
+func GetrepoInfo(username, reponame string) repoInfo {
 
 	// Получение текстовой версии статистики
 	resultStr := GetRepoInfoString(username, reponame)
 
 	// Проверка на ошибки при парсинге
 	if !resultStr.Success {
-		return RepoInfo{
+		return repoInfo{
 			Success: false,
 			Error:   resultStr.Error,
 		}
 	}
 
-	return RepoInfo{
+	return repoInfo{
 		Success:  resultStr.Success,
 		Error:    resultStr.Error,
 		Username: resultStr.Username,
@@ -160,7 +160,7 @@ func Repo(w http.ResponseWriter, r *http.Request) {
 			w.Write(jsonResp)
 		}
 	} else {
-		jsonResp, err := json.Marshal(GetRepoInfo(username, reponame))
+		jsonResp, err := json.Marshal(GetrepoInfo(username, reponame))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			json, _ := json.Marshal(map[string]string{"Error": "Internal Server Error"})
