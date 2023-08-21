@@ -48,10 +48,7 @@ func Find(s, substr, stopChar string) string {
 // ToInt переводит string в int
 func ToInt(s string) int {
 
-	i, err := strconv.Atoi(s)
-	if err != nil {
-		return 0
-	}
+	i, _ := strconv.Atoi(s)
 
 	return i
 
@@ -60,10 +57,7 @@ func ToInt(s string) int {
 // ToBool переводит string в bool
 func ToBool(s string) bool {
 
-	f, err := strconv.ParseBool(s)
-	if err != nil {
-		return false
-	}
+	f, _ := strconv.ParseBool(s)
 
 	return f
 
