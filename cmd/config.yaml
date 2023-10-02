@@ -1,0 +1,4 @@
+server:
+  server_port: ":8080"
+  base_path: "/api"
+  request_timeout: 15s
