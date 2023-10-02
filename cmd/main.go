@@ -1,41 +1,57 @@
 package main
 
 import (
-	"net/http"
 	"os"
 	"time"
 
-	"github.com/go-chi/chi"
-	"github.com/hud0shnik/githubstatsapi/api"
-	api2 "github.com/hud0shnik/githubstatsapi/api/v2"
+	"github.com/hud0shnik/githubstatsapi/controllers"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
 )
+
+// config - структура конфигов
+type config struct {
+	Server controllers.Config `yaml:"server"`
+}
+
+// configure получает конфиги из файла
+func configure(fileName string) (*config, error) {
+
+	data, err := os.ReadFile(fileName)
+	if err != nil {
+		return nil, err
+	}
+
+	var config config
+
+	if err = yaml.Unmarshal(data, &config); err != nil {
+		return nil, err
+	}
+
+	return &config, nil
+}
 
 func main() {
 
 	// Настройка логгера
 	logrus.SetFormatter(&logrus.JSONFormatter{
 		TimestampFormat: time.DateTime,
+		PrettyPrint:     true,
 	})
 
+	// Получение конфигов
+	config, err := configure("config.yaml")
+	if err != nil {
+		logrus.WithError(err).Fatal("can't read config")
+	}
+
 	// Вывод времени начала работы
-	logrus.Info("API Start")
-	logrus.Info("Port: " + os.Getenv("PORT"))
+	logrus.Printf("API Starts at %s port", config.Server.ServerPort)
 
-	// Роутер
-	router := chi.NewRouter()
-
-	// Маршруты
-	router.Get("/api/user", api.User)
-	router.Get("/api/repo", api.Repo)
-	router.Get("/api/commits", api.Commits)
-
-	// Маршруты v2
-	router.Get("/api/v2/user", api2.User)
-	router.Get("/api/v2/repo", api2.Repo)
-	router.Get("/api/v2/commits", api2.Commits)
+	// Создание сервера
+	s := controllers.NewServer(&config.Server)
 
 	// Запуск API
-	logrus.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
+	logrus.Fatal(s.Server.ListenAndServe())
 
 }
