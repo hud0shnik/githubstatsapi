@@ -81,8 +81,9 @@ func getCommits(username string, date string) (userCommits, int, error) {
 // Роут "/commits"
 func Commits(w http.ResponseWriter, r *http.Request) {
 
-	// Передача в заголовок респонса типа данных
-	w.Header().Set("Content-Type", "application/json")
+	// Установка заголовков
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
 
 	// Получение параметра id из реквеста
 	id := r.URL.Query().Get("id")
