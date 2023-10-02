@@ -132,8 +132,9 @@ func GetRepoInfo(username, reponame string) RepoInfo {
 // Роут "/repo"
 func Repo(w http.ResponseWriter, r *http.Request) {
 
-	// Передача в заголовок респонса типа данных
-	w.Header().Set("Content-Type", "application/json")
+	// Установка заголовков
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
 
 	// Получение параметра имени пользователя и названия репозитория из реквеста
 	username := r.URL.Query().Get("username")
