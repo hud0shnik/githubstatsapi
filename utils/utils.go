@@ -48,6 +48,9 @@ func Find(s, substr, stopChar string) string {
 // ToInt переводит string в int
 func ToInt(s string) int {
 
+	// Удаление запятых из числа
+	s = strings.ReplaceAll(s, ",", "")
+
 	i, _ := strconv.Atoi(s)
 
 	return i
