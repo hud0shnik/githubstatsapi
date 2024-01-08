@@ -100,7 +100,7 @@ func getUserInfoString(username string) (userInfoString, int, error) {
 	result.Stars, left = utils.FindWithIndex(pageStr, "Stars\n    <span title=\"", "\"", left)
 
 	// Ссылка на аватар
-	result.Avatar, left = utils.FindWithIndex(pageStr, "<img style=\"height:auto;\" alt=\"Avatar\" src=\"", "\"", left)
+	result.Avatar, left = utils.FindWithIndex(pageStr, " <a itemprop=\"image\" href=\"", "\"", left)
 
 	// Статус
 	result.Status, left = utils.FindWithIndex(pageStr, "status-message-wrapper f6 color-fg-default no-wrap \" >\n        <div>", "</div>", left)
