@@ -62,12 +62,11 @@ success                     |        bool        |
 error                       |       string       | api error response (default value= "")
 username                    |       string       |
 name                        |       string       |
-followers                   |       string       |
-following                   |       string       |
-repositories                |       string       |
-packages                    |       string       |
-stars                       |       string       |
-contributions               |       string       |
+followers                   |        int         |
+following                   |        int         |
+repositories                |        int         |
+packages                    |        int         |
+stars                       |        int         |
 status                      |       string       |
 avatar                      |       string       | avatar url
 
@@ -96,12 +95,12 @@ success                     |        bool        |
 error                       |       string       | api error response (default value= "")
 username                    |       string       |
 reponame                    |       string       |
-commits                     |       string       |
-branches                    |       string       |
-tags                        |       string       |
-stars                       |       string       |
-watching                    |       string       |
-forks                       |       string       |
+commits                     |        int         |
+branches                    |        int         |
+tags                        |        int         |
+stars                       |        int         |
+watching                    |        int         |
+forks                       |        int         |
 
 
 ### Samples
