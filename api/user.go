@@ -12,34 +12,34 @@ import (
 
 // Структура для хранения полной информации о пользователе
 type userInfo struct {
-	Success       bool   `json:"success"`
-	Error         string `json:"error"`
-	Username      string `json:"username"`
-	Name          string `json:"name"`
-	Followers     int    `json:"followers"`
-	Following     int    `json:"following"`
-	Repositories  int    `json:"repositories"`
-	Packages      int    `json:"packages"`
-	Stars         int    `json:"stars"`
-	Contributions int    `json:"contributions"`
-	Status        string `json:"status"`
-	Avatar        string `json:"avatar"`
+	Success      bool   `json:"success"`
+	Error        string `json:"error"`
+	Username     string `json:"username"`
+	Name         string `json:"name"`
+	Followers    int    `json:"followers"`
+	Following    int    `json:"following"`
+	Repositories int    `json:"repositories"`
+	Packages     int    `json:"packages"`
+	Stars        int    `json:"stars"`
+	Status       string `json:"status"`
+	Avatar       string `json:"avatar"`
+	// Contributions int    `json:"contributions"`
 }
 
 // Структура для парсинга полной информации о пользователе
 type userInfoString struct {
-	Success       bool   `json:"success"`
-	Error         string `json:"error"`
-	Username      string `json:"username"`
-	Name          string `json:"name"`
-	Followers     string `json:"followers"`
-	Following     string `json:"following"`
-	Repositories  string `json:"repositories"`
-	Packages      string `json:"packages"`
-	Stars         string `json:"stars"`
-	Contributions string `json:"contributions"`
-	Status        string `json:"status"`
-	Avatar        string `json:"avatar"`
+	Success      bool   `json:"success"`
+	Error        string `json:"error"`
+	Username     string `json:"username"`
+	Name         string `json:"name"`
+	Followers    string `json:"followers"`
+	Following    string `json:"following"`
+	Repositories string `json:"repositories"`
+	Packages     string `json:"packages"`
+	Stars        string `json:"stars"`
+	Status       string `json:"status"`
+	Avatar       string `json:"avatar"`
+	// Contributions string `json:"contributions"`
 }
 
 // Функция получения информации о пользователе в формате строк
@@ -110,10 +110,10 @@ func GetUserInfoString(username string) userInfoString {
 	result.Followers, left = utils.FindWithIndex(pageStr, "<span class=\"text-bold color-fg-default\">", "<", left)
 
 	// Подписки
-	result.Following, left = utils.FindWithIndex(pageStr, "<span class=\"text-bold color-fg-default\">", "<", left)
+	result.Following, _ = utils.FindWithIndex(pageStr, "<span class=\"text-bold color-fg-default\">", "<", left)
 
-	// Контрибуции за год
-	result.Contributions, _ = utils.FindWithIndex(pageStr, "<h2 class=\"f4 text-normal mb-2\">\n      ", "\n", left)
+	// Контрибуции за год (GitHub с недавнего времени не успевает подгружать количество контрибуций, так что пока это поле не парсится)
+	// result.Contributions, _ = utils.FindWithIndex(pageStr, "<h2 class=\"f4 text-normal mb-2\">\n      ", "\n", left)
 
 	return result
 
@@ -134,18 +134,18 @@ func GetUserInfo(username string) userInfo {
 	}
 
 	return userInfo{
-		Success:       resultStr.Success,
-		Error:         resultStr.Error,
-		Username:      username,
-		Name:          resultStr.Name,
-		Followers:     utils.ToInt(resultStr.Followers),
-		Following:     utils.ToInt(resultStr.Following),
-		Repositories:  utils.ToInt(resultStr.Repositories),
-		Packages:      utils.ToInt(resultStr.Packages),
-		Stars:         utils.ToInt(resultStr.Stars),
-		Contributions: utils.ToInt(resultStr.Contributions),
-		Status:        resultStr.Status,
-		Avatar:        resultStr.Avatar,
+		Success:      resultStr.Success,
+		Error:        resultStr.Error,
+		Username:     username,
+		Name:         resultStr.Name,
+		Followers:    utils.ToInt(resultStr.Followers),
+		Following:    utils.ToInt(resultStr.Following),
+		Repositories: utils.ToInt(resultStr.Repositories),
+		Packages:     utils.ToInt(resultStr.Packages),
+		Stars:        utils.ToInt(resultStr.Stars),
+		Status:       resultStr.Status,
+		Avatar:       resultStr.Avatar,
+		// Contributions: utils.ToInt(resultStr.Contributions),
 	}
 
 }
