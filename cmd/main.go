@@ -4,14 +4,14 @@ import (
 	"os"
 	"time"
 
-	"github.com/hud0shnik/githubstatsapi/controllers"
+	"github.com/hud0shnik/githubstatsapi/internal/controller"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
 
 // config - структура конфигов
 type config struct {
-	Server controllers.Config `yaml:"server"`
+	Server controller.Config `yaml:"server"`
 }
 
 // configure получает конфиги из файла
@@ -49,7 +49,7 @@ func main() {
 	logrus.Printf("API Starts at %s port", config.Server.ServerPort)
 
 	// Создание сервера
-	s := controllers.NewServer(&config.Server)
+	s := controller.NewServer(&config.Server)
 
 	// Запуск API
 	logrus.Fatal(s.Server.ListenAndServe())
