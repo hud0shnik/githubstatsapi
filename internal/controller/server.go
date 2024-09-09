@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	api "github.com/hud0shnik/githubstatsapi/api"
-	api2 "github.com/hud0shnik/githubstatsapi/api/v2"
+	"github.com/hud0shnik/githubstatsapi/internal/handler"
+	handlerv2 "github.com/hud0shnik/githubstatsapi/internal/handler/v2"
 )
 
 // Server - структура сервера
@@ -44,14 +44,14 @@ func (s *Server) NewRouter() {
 	router := chi.NewRouter()
 
 	// Маршруты
-	router.Get("/api/user", api.User)
-	router.Get("/api/repo", api.Repo)
-	router.Get("/api/commits", api.Commits)
+	router.Get("/api/user", handler.User)
+	router.Get("/api/repo", handler.Repo)
+	router.Get("/api/commits", handler.Commits)
 
 	// Маршруты v2
-	router.Get("/api/v2/user", api2.User)
-	router.Get("/api/v2/repo", api2.Repo)
-	router.Get("/api/v2/commits", api2.Commits)
+	router.Get("/api/v2/user", handlerv2.User)
+	router.Get("/api/v2/repo", handlerv2.Repo)
+	router.Get("/api/v2/commits", handlerv2.Commits)
 
 	s.router = router
 

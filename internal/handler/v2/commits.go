@@ -1,21 +1,20 @@
-package api
+package handlerv2
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/hud0shnik/githubstatsapi/utils"
+	"github.com/sirupsen/logrus"
 )
 
 // Структура для хранения информации о коммитах
 type userCommits struct {
-	Success  bool   `json:"success"`
-	Error    string `json:"error"`
 	Date     string `json:"date"`
 	Username string `json:"username"`
 	Commits  int    `json:"commits"`
@@ -23,7 +22,7 @@ type userCommits struct {
 }
 
 // Функция получения коммитов
-func GetCommits(username string, date string) userCommits {
+func getCommits(username string, date string) (userCommits, int, error) {
 
 	// Если поле даты пустое, функция поставит сегодняшнее число
 	if date == "" {
@@ -33,11 +32,16 @@ func GetCommits(username string, date string) userCommits {
 	// Формирование и исполнение запроса
 	resp, err := http.Get("https://github.com/" + username + "?tab=overview&from=" + date)
 	if err != nil {
-		return userCommits{
-			Error: "Cant reach github.com",
-		}
+		return userCommits{}, http.StatusInternalServerError,
+			fmt.Errorf("in http.Get: %w", err)
 	}
 	defer resp.Body.Close()
+
+	// Проверка статускода
+	if resp.StatusCode != 200 {
+		return userCommits{}, resp.StatusCode,
+			fmt.Errorf(resp.Status)
+	}
 
 	// Запись респонса
 	body, _ := io.ReadAll(resp.Body)
@@ -47,7 +51,7 @@ func GetCommits(username string, date string) userCommits {
 
 	// Запись html в файл для тестирования
 	/*if err := os.WriteFile("sample.html", []byte(pageStr), 0666); err != nil {
-		log.Fatal(err)
+		logrus..Fatal(err)
 	}*/
 
 	// Структура, которую будет возвращать функция
@@ -59,17 +63,18 @@ func GetCommits(username string, date string) userCommits {
 	// Индекс ячейки с нужной датой
 	i := strings.Index(pageStr, "data-date=\""+date)
 
-	// Поиск и запись информации
-	if i != -1 {
-		result.Success = true
-		pageStr = pageStr[i:]
-		result.Color, _ = strconv.Atoi(utils.Find(pageStr, "data-level=\"", "\""))
-		result.Commits, _ = strconv.Atoi(utils.Find(pageStr, "class=\"sr-only\">", " "))
-	} else {
-		result.Error = "commits not found"
+	// Проверка на наличие ячейки
+	if i == -1 {
+		return userCommits{}, http.StatusNotFound,
+			fmt.Errorf("not found")
 	}
 
-	return result
+	// Запись данных
+	pageStr = pageStr[i:]
+	result.Color, _ = strconv.Atoi(utils.Find(pageStr, "data-level=\"", "\""))
+	result.Commits, _ = strconv.Atoi(utils.Find(pageStr, "class=\"sr-only\">", " "))
+
+	return result, http.StatusOK, nil
 
 }
 
@@ -83,24 +88,34 @@ func Commits(w http.ResponseWriter, r *http.Request) {
 	// Получение параметра id из реквеста
 	id := r.URL.Query().Get("id")
 
-	// Если параметра нет, отправка ошибки
+	// Проверка на наличие параметра
 	if id == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		json, _ := json.Marshal(map[string]string{"Error": "Please insert user id"})
+		json, _ := json.Marshal(apiError{Error: "please insert user id"})
 		w.Write(json)
 		return
 	}
 
-	// Форматирование структуры в json и отправка пользователю
-	jsonResp, err := json.Marshal(GetCommits(id, r.URL.Query().Get("date")))
+	// Получение статистики
+	result, statusCode, err := getCommits(id, r.URL.Query().Get("date"))
+	if err != nil {
+		w.WriteHeader(statusCode)
+		json, _ := json.Marshal(apiError{Error: err.Error()})
+		w.Write(json)
+		return
+	}
+
+	// Перевод в json
+	jsonResp, err := json.Marshal(result)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json, _ := json.Marshal(map[string]string{"Error": "Internal Server Error"})
+		json, _ := json.Marshal(apiError{Error: "internal server error"})
 		w.Write(json)
-		log.Printf("json.Marshal error: %s", err)
-	} else {
-		w.WriteHeader(http.StatusOK)
-		w.Write(jsonResp)
+		logrus.Printf("json.Marshal error: %s", err)
+		return
 	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonResp)
 
 }

@@ -1,4 +1,4 @@
-package api2
+package handlerv2
 
 import (
 	"encoding/json"
