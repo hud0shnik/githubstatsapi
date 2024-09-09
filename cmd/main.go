@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"os"
 	"time"
 
@@ -33,6 +34,10 @@ func configure(fileName string) (*config, error) {
 
 func main() {
 
+	// Получение пути до конфига
+	var configPath = flag.String("config", "config.yaml", "config path")
+	flag.Parse()
+
 	// Настройка логгера
 	logrus.SetFormatter(&logrus.JSONFormatter{
 		TimestampFormat: time.DateTime,
@@ -40,7 +45,7 @@ func main() {
 	})
 
 	// Получение конфигов
-	config, err := configure("config.yaml")
+	config, err := configure(*configPath)
 	if err != nil {
 		logrus.WithError(err).Fatal("can't read config")
 	}
