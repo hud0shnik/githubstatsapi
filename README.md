@@ -1,4 +1,5 @@
-# 🐙 GithubStatsAPI 📈
+# 🐙 GithubStatsAPI-vercel-branch 📈
+Branch for deploying on Vercel
 
 <i><b>GithubStatsAPI</i></b> provides fast access to GitHub user statistics and commits
 
