@@ -1,9 +1,6 @@
-package utils
+package parse
 
-import (
-	"strconv"
-	"strings"
-)
+import "strings"
 
 // FindWithIndex производит поиск substr в s[start:] и возвращает строку от конца substr до stopChar
 func FindWithIndex(s, substr, stopChar string, start int) (string, int) {
@@ -42,26 +39,5 @@ func Find(s, substr, stopChar string) string {
 	}
 
 	return ""
-
-}
-
-// ToInt переводит string в int
-func ToInt(s string) int {
-
-	// Удаление запятых из числа
-	s = strings.ReplaceAll(s, ",", "")
-
-	i, _ := strconv.Atoi(s)
-
-	return i
-
-}
-
-// ToBool переводит string в bool
-func ToBool(s string) bool {
-
-	f, _ := strconv.ParseBool(s)
-
-	return f
 
 }

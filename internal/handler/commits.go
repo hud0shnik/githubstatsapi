@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hud0shnik/githubstatsapi/utils"
+	"github.com/hud0shnik/githubstatsapi/internal/parse"
 )
 
 // Структура для хранения информации о коммитах
@@ -63,8 +63,8 @@ func GetCommits(username string, date string) userCommits {
 	if i != -1 {
 		result.Success = true
 		pageStr = pageStr[i:]
-		result.Color, _ = strconv.Atoi(utils.Find(pageStr, "data-level=\"", "\""))
-		result.Commits, _ = strconv.Atoi(utils.Find(pageStr, "class=\"sr-only\">", " "))
+		result.Color, _ = strconv.Atoi(parse.Find(pageStr, "data-level=\"", "\""))
+		result.Commits, _ = strconv.Atoi(parse.Find(pageStr, "class=\"sr-only\">", " "))
 	} else {
 		result.Error = "commits not found"
 	}

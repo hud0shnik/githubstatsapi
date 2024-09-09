@@ -7,7 +7,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/hud0shnik/githubstatsapi/utils"
+	"github.com/hud0shnik/githubstatsapi/internal/convert"
+	"github.com/hud0shnik/githubstatsapi/internal/parse"
 )
 
 // Структура для хранения полной информации о пользователе
@@ -89,31 +90,31 @@ func GetUserInfoString(username string) userInfoString {
 	left := 0
 
 	// Репозитории
-	result.Repositories, left = utils.FindWithIndex(pageStr, "Repositories\n    <span title=\"", "\"", left)
+	result.Repositories, left = parse.FindWithIndex(pageStr, "Repositories\n    <span title=\"", "\"", left)
 
 	// Пакеты
-	result.Packages, left = utils.FindWithIndex(pageStr, "Packages\n      <span title=\"", "\"", left)
+	result.Packages, left = parse.FindWithIndex(pageStr, "Packages\n      <span title=\"", "\"", left)
 
 	// Поставленные звезды
-	result.Stars, left = utils.FindWithIndex(pageStr, "Stars\n    <span title=\"", "\"", left)
+	result.Stars, left = parse.FindWithIndex(pageStr, "Stars\n    <span title=\"", "\"", left)
 
 	// Ссылка на аватар
-	result.Avatar, left = utils.FindWithIndex(pageStr, " <a itemprop=\"image\" href=\"", "\"", left)
+	result.Avatar, left = parse.FindWithIndex(pageStr, " <a itemprop=\"image\" href=\"", "\"", left)
 
 	// Статус
-	result.Status, left = utils.FindWithIndex(pageStr, "status-message-wrapper f6 color-fg-default no-wrap \" >\n        <div>", "</div>", left)
+	result.Status, left = parse.FindWithIndex(pageStr, "status-message-wrapper f6 color-fg-default no-wrap \" >\n        <div>", "</div>", left)
 
 	// Имя пользователя
-	result.Name, left = utils.FindWithIndex(pageStr, "\"name\">\n          ", "\n", left)
+	result.Name, left = parse.FindWithIndex(pageStr, "\"name\">\n          ", "\n", left)
 
 	// Подписчики
-	result.Followers, left = utils.FindWithIndex(pageStr, "<span class=\"text-bold color-fg-default\">", "<", left)
+	result.Followers, left = parse.FindWithIndex(pageStr, "<span class=\"text-bold color-fg-default\">", "<", left)
 
 	// Подписки
-	result.Following, left = utils.FindWithIndex(pageStr, "<span class=\"text-bold color-fg-default\">", "<", left)
+	result.Following, left = parse.FindWithIndex(pageStr, "<span class=\"text-bold color-fg-default\">", "<", left)
 
 	// Контрибуции за год
-	result.Contributions, _ = utils.FindWithIndex(pageStr, "<h2 class=\"f4 text-normal mb-2\">\n      ", "\n", left)
+	result.Contributions, _ = parse.FindWithIndex(pageStr, "<h2 class=\"f4 text-normal mb-2\">\n      ", "\n", left)
 
 	return result
 
@@ -138,12 +139,12 @@ func GetUserInfo(username string) userInfo {
 		Error:         resultStr.Error,
 		Username:      username,
 		Name:          resultStr.Name,
-		Followers:     utils.ToInt(resultStr.Followers),
-		Following:     utils.ToInt(resultStr.Following),
-		Repositories:  utils.ToInt(resultStr.Repositories),
-		Packages:      utils.ToInt(resultStr.Packages),
-		Stars:         utils.ToInt(resultStr.Stars),
-		Contributions: utils.ToInt(resultStr.Contributions),
+		Followers:     convert.ToInt(resultStr.Followers),
+		Following:     convert.ToInt(resultStr.Following),
+		Repositories:  convert.ToInt(resultStr.Repositories),
+		Packages:      convert.ToInt(resultStr.Packages),
+		Stars:         convert.ToInt(resultStr.Stars),
+		Contributions: convert.ToInt(resultStr.Contributions),
 		Status:        resultStr.Status,
 		Avatar:        resultStr.Avatar,
 	}
