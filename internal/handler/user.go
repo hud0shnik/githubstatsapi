@@ -99,7 +99,7 @@ func GetUserInfoString(username string) userInfoString {
 	result.Stars, left = parse.FindWithIndex(pageStr, "Stars\n    <span title=\"", "\"", left)
 
 	// Ссылка на аватар
-	result.Avatar, left = parse.FindWithIndex(pageStr, " <a itemprop=\"image\" href=\"", "\"", left)
+	result.Avatar, left = parse.FindWithIndex(pageStr, " <a class=\"d-block\" itemprop=\"image\" href=\"", "\"", left)
 
 	// Статус
 	result.Status, left = parse.FindWithIndex(pageStr, "status-message-wrapper f6 color-fg-default no-wrap \" >\n        <div>", "</div>", left)
